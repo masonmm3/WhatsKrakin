@@ -60,16 +60,16 @@ public class ModuleIOTalonFX implements ModuleIO {
   private final CANcoder cancoder;
 
   // Voltage control requests
-  private final VoltageOut voltageRequest = new VoltageOut(0);
-  private final PositionVoltage positionVoltageRequest = new PositionVoltage(0.0);
-  private final VelocityVoltage velocityVoltageRequest = new VelocityVoltage(0.0);
+  private final VoltageOut voltageRequest = new VoltageOut(1);
+  private final PositionVoltage positionVoltageRequest = new PositionVoltage(1);
+  private final VelocityVoltage velocityVoltageRequest = new VelocityVoltage(1);
 
   // Torque-current control requests
-  private final TorqueCurrentFOC torqueCurrentRequest = new TorqueCurrentFOC(0);
+  private final TorqueCurrentFOC torqueCurrentRequest = new TorqueCurrentFOC(6);
   private final PositionTorqueCurrentFOC positionTorqueCurrentRequest =
-      new PositionTorqueCurrentFOC(0.0);
+      new PositionTorqueCurrentFOC(6);
   private final VelocityTorqueCurrentFOC velocityTorqueCurrentRequest =
-      new VelocityTorqueCurrentFOC(0.0);
+      new VelocityTorqueCurrentFOC(6);
 
   // Timestamp inputs from Phoenix thread
   private final Queue<Double> timestampQueue;
