@@ -25,26 +25,24 @@ public class TunerConstants {
   // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
   private static final Slot0Configs steerGains =
       new Slot0Configs()
-          .withKP(300)
+          .withKP(375.0)
           .withKI(0)
-          .withKD(2.2)
-          .withKS(0.2)
-          .withKV(1.66)
+          .withKD(1.8)
+          .withKS(0.04)
+          .withKV(0.16)
           .withKA(0)
           .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
   // When using closed-loop control, the drive motor uses the control
   // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
   private static final Slot0Configs driveGains =
-      new Slot0Configs().withKP(6).withKI(0).withKD(0.1).withKS(.49119).withKV(2.63);
+      new Slot0Configs().withKP(0).withKI(0).withKD(0).withKS(.49119).withKV(1);
 
   // The closed-loop output type to use for the steer motors;
   // This affects the PID/FF gains for the steer motors
-  private static final ClosedLoopOutputType kSteerClosedLoopOutput =
-      ClosedLoopOutputType.TorqueCurrentFOC;
+  private static final ClosedLoopOutputType kSteerClosedLoopOutput = ClosedLoopOutputType.Voltage;
   // The closed-loop output type to use for the drive motors;
   // This affects the PID/FF gains for the drive motors
-  private static final ClosedLoopOutputType kDriveClosedLoopOutput =
-      ClosedLoopOutputType.TorqueCurrentFOC;
+  private static final ClosedLoopOutputType kDriveClosedLoopOutput = ClosedLoopOutputType.Voltage;
 
   // The type of motor used for the drive motor
   private static final DriveMotorArrangement kDriveMotorType =
@@ -83,7 +81,7 @@ public class TunerConstants {
 
   // Theoretical free speed (m/s) at 12 V applied output;
   // This needs to be tuned to your individual robot
-  public static final LinearVelocity kSpeedAt12Volts = MetersPerSecond.of(Units.feetToMeters(18.7));
+  public static final LinearVelocity kSpeedAt12Volts = MetersPerSecond.of(Units.feetToMeters(13.7));
 
   // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
   // This may need to be tuned to your individual robot

@@ -67,9 +67,9 @@ public class ModuleIOTalonFX implements ModuleIO {
   // Torque-current control requests
   private final TorqueCurrentFOC torqueCurrentRequest = new TorqueCurrentFOC(6);
   private final PositionTorqueCurrentFOC positionTorqueCurrentRequest =
-      new PositionTorqueCurrentFOC(6);
+      new PositionTorqueCurrentFOC(1);
   private final VelocityTorqueCurrentFOC velocityTorqueCurrentRequest =
-      new VelocityTorqueCurrentFOC(6);
+      new VelocityTorqueCurrentFOC(1);
 
   // Timestamp inputs from Phoenix thread
   private final Queue<Double> timestampQueue;
