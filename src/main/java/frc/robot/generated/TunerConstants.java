@@ -25,7 +25,7 @@ public class TunerConstants {
   // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
   private static final Slot0Configs steerGains =
       new Slot0Configs()
-          .withKP(375.0)
+          .withKP(340.0)
           .withKI(0)
           .withKD(1.8)
           .withKS(0.04)
@@ -85,7 +85,7 @@ public class TunerConstants {
 
   // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
   // This may need to be tuned to your individual robot
-  private static final double kCoupleRatio = 3.5;
+  private static final double kCoupleRatio = 0.625;
 
   private static final double kDriveGearRatio = 5.60;
   private static final double kSteerGearRatio = 11.1428;
