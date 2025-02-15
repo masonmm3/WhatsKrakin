@@ -26,6 +26,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.arm.ArmIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -48,6 +50,7 @@ public class RobotContainer {
   // Subsystems
   private final Vision vision;
   private final Drive drive;
+  private Arm arm;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -78,6 +81,8 @@ public class RobotContainer {
                 // new VisionIOPhotonVision(camera3Name, robotToCamera3)
                 );
 
+        arm = new Arm("Arm", new ArmIOTalonFX(0, "", 40, false, true, 10));
+
         break;
 
       case SIM:
@@ -98,6 +103,9 @@ public class RobotContainer {
                 // new VisionIOPhotonVisionSim(camera2Name, robotToCamera2, drive::getPose),
                 // new VisionIOPhotonVisionSim(camera3Name, robotToCamera3, drive::getPose)
                 );
+
+        arm = new Arm("Arm", new ArmIOTalonFX(0, "", 40, false, true, 10));
+
         break;
 
       default:
@@ -111,6 +119,9 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+
+        arm = new Arm("Arm", new ArmIOTalonFX(0, "", 40, false, true, 10));
+
         break;
     }
 
