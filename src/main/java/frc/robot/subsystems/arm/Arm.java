@@ -13,7 +13,7 @@ public class Arm extends SubsystemBase {
 
   private final String name;
   private final ArmIO io;
-  protected final ArmIOInputsAutoLogged inputs;
+  protected final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
   private final Alert disconnected;
   protected final Timer stateTimer = new Timer();
 

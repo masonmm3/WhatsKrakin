@@ -80,8 +80,7 @@ public class RobotContainer {
                 // new VisionIOPhotonVision(camera2Name, robotToCamera2),
                 // new VisionIOPhotonVision(camera3Name, robotToCamera3)
                 );
-
-        arm = new Arm("Arm", new ArmIOTalonFX(0, "", 40, false, true, 10));
+        arm = new Arm("Arm", new ArmIOTalonFX(0, "rio", 40, false, true, 10));
 
         break;
 
