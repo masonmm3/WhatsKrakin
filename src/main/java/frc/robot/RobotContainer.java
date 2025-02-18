@@ -26,6 +26,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.arm.ArmIO;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -48,6 +50,8 @@ public class RobotContainer {
   // Subsystems
   private final Vision vision;
   private final Drive drive;
+public static Arm arm;
+public static IO io;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -60,6 +64,7 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
 
+      arm = new Arm(new ArmHardware());
         // Real robot, instantiate hardware IO implementations
         drive =
             new Drive(
@@ -82,6 +87,8 @@ public class RobotContainer {
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
+arm = new Arm(new ArmSim());
+
         drive =
             new Drive(
                 new GyroIO() {},
@@ -102,6 +109,7 @@ public class RobotContainer {
 
       default:
         // Replayed robot, disable IO implementations
+arm = new Arm(new ArmIO() {});
 
         drive =
             new Drive(
@@ -184,5 +192,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
-  }
+ }
+
+
 }

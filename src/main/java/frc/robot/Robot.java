@@ -36,6 +36,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   private RobotContainer robotContainer;
+  private Timer isPressed = new Timer();
 
   public Robot() {
     // Record metadata
@@ -114,6 +115,7 @@ public class Robot extends LoggedRobot {
     // This must be called from the robot's periodic block in order for anything in
     // the Command-based framework to work.
     CommandScheduler.getInstance().run();
+    RobotContainer.arm.ArmPeriodic();
 
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
@@ -152,6 +154,7 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
+    RobotContainer.arm.advancedArm(RobotContainer.io.getDrX(), RobotContainer.io.getDrY(), RobotContainer.io.getDrB(),RobotContainer.io.getDrA());
   }
 
   /** This function is called periodically during operator control. */

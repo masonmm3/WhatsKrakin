@@ -1,29 +1,62 @@
 package frc.robot.subsystems.arm;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
+
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Arm extends SubsystemBase {
-  private final String name;
-  private final ArmIO io;
-  protected final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
-  private final Alert disconnected;
-  private final Timer stateTimer = new Timer();
+public class Arm {
+ 
+private Pose3d angle = new Pose3d();
 
-  public Arm(String name, ArmIO io) {
-    this.name = name;
-    this.io = io;
+private final ArmIO io;
+private final ArmIOInputsAutoLogOutput inputs = new ArmIOInputsAutoLogOutput();
+public double ArmAngle;
+public double ExtendLength;
+public Timer oneLaunch = new Timer;
+public int coralStack = 0;
+public Timer coralRecorder = new Timer 
 
-    disconnected = new Alert(name + " motor Disconnected", Alert.AlertType.kWarning);
-    stateTimer.start();
-  }
+private Pose2d oldpose = new Pose2d();
+private Timer time = new Timer();
 
-  public void periodic() {
-    io.updateInputs(inputs);
-    Logger.processInputs(name, inputs);
-    disconnected.set(!inputs.connected);
-  }
+ch (ShooterMode.get()){
+se Event:
+
+if (Zero){
+ArmAngle = 0;
+ExtendLength = .1;
+
+} else if (Ninety){
+ArmAngle = 90;
+ExtendLength = .5;
+} else if (one-eighty){
+ArmAngle = 180;
+ExtendLength = 0;
+} else if (two-seventy){
+ArmAngle = 270;
+ExtendLength = .5;
+}
+break;
+
+default:
+
+if (Ninety){
+ArmAngle = 90;
+ExtendLength = .5;
+} else if (one-eighty){
+ArmAngle = 180;
+ExtendLength = 0;
+} else if (two-seventy){
+ArmAngle = 270;
+ExtendLength = .5;
+} else if (Zero){
+ArmAngle = 0;
+ExtendLength = .1;}
+
+
+
 }
