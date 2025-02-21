@@ -4,14 +4,17 @@ import static frc.robot.util.PhoenixUtil.tryUntilOk;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -19,6 +22,11 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 
 public class ArmIOTalonFX implements ArmIO {
+  public static final double reduction = 3.0;
+  private static final Rotation2d offset = new Rotation2d();
+  private static final int encoderId = 0;
+
+  
   private final TalonFX armPivot;
 
   private final StatusSignal<Angle> position;
@@ -45,6 +53,7 @@ public class ArmIOTalonFX implements ArmIO {
     armPivot = new TalonFX(idPivot, bus);
 
     TalonFXConfiguration configPivot = new TalonFXConfiguration();
+    configPivot.Slot0 = new Slot0Configs().withKP(reductionPivot).withKI(reductionPivot).withKD(reductionPivot);
     configPivot.MotorOutput.Inverted =
         invertPivot ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
     configPivot.MotorOutput.NeutralMode =
