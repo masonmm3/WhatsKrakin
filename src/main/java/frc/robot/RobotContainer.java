@@ -38,6 +38,8 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+import frc.robot.util.IO;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -50,8 +52,8 @@ public class RobotContainer {
   // Subsystems
   private final Vision vision;
   private final Drive drive;
+  public static IO io = new IO();
 public static Arm arm;
-public static IO io;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);

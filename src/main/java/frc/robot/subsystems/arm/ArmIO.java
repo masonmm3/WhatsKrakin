@@ -16,8 +16,7 @@ public class ArmIO {
     public boolean ExtendisOK = false;
 
     } 
-    public default void updateInputs(ArmIOInputs inputs) {
-    }
+    
     public default void setMotors(double extend, double angle) {
     }
     

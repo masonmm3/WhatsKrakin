@@ -3,6 +3,7 @@ package frc.robot.subsystems.arm;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Timer;
@@ -10,53 +11,30 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Arm {
  
-private Pose3d angle = new Pose3d();
+  private Pose3d angle = new Pose3d();
 
-private final ArmIO io;
-private final ArmIOInputsAutoLogOutput inputs = new ArmIOInputsAutoLogOutput();
-public double ArmAngle;
-public double ExtendLength;
-public Timer oneLaunch = new Timer;
-public int coralStack = 0;
-public Timer coralRecorder = new Timer 
+  private final ArmIO io;
+  private final ArmIOInputsAutoLogOutput inputs = new ArmIOInputsAutoLogOutput();
+  public double ArmAngle;
+  public double ExtendLength;
+  public Timer oneLaunch = new Timer();
+  public int coralStack = 0;
+  public Timer coralRecorder = new Timer(); 
 
-private Pose2d oldpose = new Pose2d();
-private Timer time = new Timer();
+  private Pose2d oldpose = new Pose2d();
+  private Timer time = new Timer();
 
-ch (ShooterMode.get()){
-se Event:
+  public void advancedArm(boolean home,boolean Ninety, boolean twoSeventy, boolean oneAte) {
+    if (home) {
+      ArmAngle = 0;
+    } else if (Ninety) {
+      ArmAngle = 90;
+    } else if (twoSeventy) {
+      ArmAngle = 270;
+    } else if (oneAte) {
+      ArmAngle = 180;
+    }
 
-if (Zero){
-ArmAngle = 0;
-ExtendLength = .1;
+    io.setMotors(ExtendLength, ArmAngle);
+  }
 
-} else if (Ninety){
-ArmAngle = 90;
-ExtendLength = .5;
-} else if (one-eighty){
-ArmAngle = 180;
-ExtendLength = 0;
-} else if (two-seventy){
-ArmAngle = 270;
-ExtendLength = .5;
-}
-break;
-
-default:
-
-if (Ninety){
-ArmAngle = 90;
-ExtendLength = .5;
-} else if (one-eighty){
-ArmAngle = 180;
-ExtendLength = 0;
-} else if (two-seventy){
-ArmAngle = 270;
-ExtendLength = .5;
-} else if (Zero){
-ArmAngle = 0;
-ExtendLength = .1;}
-
-
-
-}

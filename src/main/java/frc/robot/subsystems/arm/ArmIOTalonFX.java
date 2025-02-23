@@ -34,7 +34,7 @@ public double armSetPoint = 0.0;
 //LEDs
 public static Spark LedBlinkin = new Spark(0);
 
-public ArmHardware() {
+public void ArmHardware() {
 
 var extendConfig = new TalonFXConfiguration();
 //Config
@@ -76,7 +76,7 @@ angleConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
 AngleMotor.getConfigurator().apply(new TalonFXConfiguration());
 AngleMotor.getConfigurator().apply(angleConfig);
 
-absolutePosition = ArmEncoder.getAbsolutePosition();
+
 
 BaseStatusSignal.setUpdateFrequencyForAll(250, absolutePosition);
 ArmEncoder.optimizeBusUtilization();
@@ -103,4 +103,6 @@ inputs.ExtendisOK = ExtendMotor.isAlive();
 inputs.ArmSetPoint = armSetPoint;
 }
 
+@Override 
+public void setMotors()
 }

@@ -17,6 +17,7 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 import edu.wpi.first.wpilibj.Threads;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.generated.TunerConstants;
@@ -154,7 +155,7 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
-    RobotContainer.arm.advancedArm(RobotContainer.io.getDrX(), RobotContainer.io.getDrY(), RobotContainer.io.getDrB(),RobotContainer.io.getDrA());
+    RobotContainer.arm.advancedArm(RobotContainer.io.getarmControllerAButton(), RobotContainer.io.getarmControllerBButton(), RobotContainer.io.getarmControllerXButton(),RobotContainer.io.getarmControllerYButton());
   }
 
   /** This function is called periodically during operator control. */
