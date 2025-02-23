@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
+import frc.robot.Constants;
 
 public class LoggedTunableNumber implements DoubleSupplier {
   /**

@@ -50,7 +50,7 @@ public class RobotContainer {
   // Subsystems
   private final Vision vision;
   private final Drive drive;
-  private Arm arm;
+  private final Arm arm;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -60,8 +60,8 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    switch (Constants.currentMode) {
-      case REAL:
+    switch (Constants.getRobot()) {
+      case COMPBOT:
 
         // Real robot, instantiate hardware IO implementations
         drive =
@@ -80,11 +80,11 @@ public class RobotContainer {
                 // new VisionIOPhotonVision(camera2Name, robotToCamera2),
                 // new VisionIOPhotonVision(camera3Name, robotToCamera3)
                 );
-        arm = new Arm("Arm", new ArmIOTalonFX(1, "rio", 40, false, true, 10));
+        arm = new Arm(new ArmIOTalonFX());
 
         break;
 
-      case SIM:
+      case SIMBOT:
         // Sim robot, instantiate physics sim IO implementations
         drive =
             new Drive(
@@ -103,7 +103,7 @@ public class RobotContainer {
                 // new VisionIOPhotonVisionSim(camera3Name, robotToCamera3, drive::getPose)
                 );
 
-        arm = new Arm("Arm", new ArmIOTalonFX(1, "rio", 40, false, true, 10));
+        arm = new Arm(new ArmIOTalonFX());
 
         break;
 
@@ -119,7 +119,7 @@ public class RobotContainer {
                 new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
 
-        arm = new Arm("Arm", new ArmIOTalonFX(1, "rio", 40, false, true, 10));
+        arm = new Arm(new ArmIOTalonFX());
 
         break;
     }
@@ -185,10 +185,6 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
-
-    controller.rightTrigger().whileTrue(arm.runArm(2.0));
-
-    controller.leftTrigger().whileTrue(arm.runArm(-2.0));
   }
 
   /**
