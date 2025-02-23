@@ -80,7 +80,7 @@ public class RobotContainer {
                 // new VisionIOPhotonVision(camera2Name, robotToCamera2),
                 // new VisionIOPhotonVision(camera3Name, robotToCamera3)
                 );
-        arm = new Arm("Arm", new ArmIOTalonFX(0, "rio", 40, false, true, 10));
+        arm = new Arm("Arm", new ArmIOTalonFX(1, "rio", 40, false, true, 10));
 
         break;
 
@@ -103,7 +103,7 @@ public class RobotContainer {
                 // new VisionIOPhotonVisionSim(camera3Name, robotToCamera3, drive::getPose)
                 );
 
-        arm = new Arm("Arm", new ArmIOTalonFX(0, "", 40, false, true, 10));
+        arm = new Arm("Arm", new ArmIOTalonFX(1, "rio", 40, false, true, 10));
 
         break;
 
@@ -119,7 +119,7 @@ public class RobotContainer {
                 new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
 
-        arm = new Arm("Arm", new ArmIOTalonFX(0, "", 40, false, true, 10));
+        arm = new Arm("Arm", new ArmIOTalonFX(1, "rio", 40, false, true, 10));
 
         break;
     }
@@ -185,6 +185,10 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
+    controller.rightTrigger().whileTrue(arm.runArm(2.0));
+
+    controller.leftTrigger().whileTrue(arm.runArm(-2.0));
   }
 
   /**
