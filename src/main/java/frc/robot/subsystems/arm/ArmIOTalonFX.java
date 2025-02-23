@@ -1,5 +1,6 @@
 package frc.robot.subsystems.arm;
 
+import static edu.wpi.first.units.Units.*;
 import static frc.robot.util.PhoenixUtil.tryUntilOk;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -44,8 +45,6 @@ public class ArmIOTalonFX implements ArmIO {
 
     //status signals
     private final StatusSignal<Angle> internalPositionPivot;
-    private final StatusSignal<Angle> encoderAbsolutePositionPivot;
-    private final StatusSignal<Angle> encoderRelativePositionPivot;
     private final StatusSignal<AngularVelocity> internalVelocityPivot;
     private final StatusSignal<Voltage> appliedVoltsPivot;
     private final StatusSignal<Current> supplyCurrentAmpsPivot;
@@ -53,8 +52,6 @@ public class ArmIOTalonFX implements ArmIO {
     private final StatusSignal<Temperature> tempPivot;
 
     private final StatusSignal<Angle> internalPositionExtend;
-    private final StatusSignal<Angle> encoderAbsolutePositionExtend;
-    private final StatusSignal<Angle> encoderRelativePositionExtend;
     private final StatusSignal<AngularVelocity> internalVelocityExtend;
     private final StatusSignal<Voltage> appliedVoltsExtend;
     private final StatusSignal<Current> supplyCurrentAmpsExtend;
@@ -72,7 +69,6 @@ public class ArmIOTalonFX implements ArmIO {
 
     //connected debouncers
     private final Debouncer motorConnectedDebouncer = new Debouncer(0.5);
-    private final Debouncer encoderConnectedDebouncer = new Debouncer(0.5);
 
     public ArmIOTalonFX() {
         talonPivot = new TalonFX(0,"*");
