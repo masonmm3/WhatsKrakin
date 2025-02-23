@@ -88,6 +88,17 @@ public class Arm extends SubsystemBase {
   private BooleanSupplier coastOverride = () -> false;
   private BooleanSupplier disabledOverride = () -> false;
 
+  @AutoLogOutput(key = "Arm/PivotBrakeModeEnabled")
+  private boolean brakeModeEnabled = true;
+  
+  private TrapezoidProfile profile;
+    
+  private DoubleSupplier goal = () -> 0.0;
+  private boolean stopProfile = false;
+  @Getter private boolean shouldEStop = false;
+  @Getter private boolean isEStopped = false;
+  
+
 
   private final Alert disconnected;
 
@@ -104,10 +115,7 @@ public class Arm extends SubsystemBase {
 
     
     
-    private TrapezoidProfile profile;
     
-    private DoubleSupplier goal = () -> 0.0;
-    private boolean stopProfile = false;
   
   
 
