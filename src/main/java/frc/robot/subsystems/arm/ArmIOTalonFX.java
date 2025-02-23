@@ -4,113 +4,259 @@ import static frc.robot.util.PhoenixUtil.tryUntilOk;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
+
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
+import frc.robot.util.PhoenixUtil;
 
 public class ArmIOTalonFX implements ArmIO {
-  public static final double reduction = 3.0;
-  private static final Rotation2d offset = new Rotation2d();
-  private static final int encoderId = 0;
+    public static final double reductionPivot = 7.0;
+    public static final double reductionExtend = 10.0; //update
+    private static final Rotation2d offsetPivot = new Rotation2d();
+    private static final Rotation2d offsetExtend = new Rotation2d();
 
-  private final TalonFX armPivot;
+    //hardware
+    private final TalonFX talonPivot;
+    private final TalonFX talonExtend;
 
-  private final StatusSignal<Angle> position;
-  private final StatusSignal<AngularVelocity> velocity;
-  private final StatusSignal<Voltage> appliedVoltage;
-  private final StatusSignal<Current> supplyCurrent;
+    //config
+    private final TalonFXConfiguration ConfigPivot = new TalonFXConfiguration();
+    private final TalonFXConfiguration ConfigExtend = new TalonFXConfiguration();
 
-  private final TorqueCurrentFOC torqueCurrentFOC = new TorqueCurrentFOC(0.0).withUpdateFreqHz(0.0);
-  private final VoltageOut voltageOut = new VoltageOut(0.0).withUpdateFreqHz(0);
-  private final NeutralOut neutralOut = new NeutralOut();
+    //status signals
+    private final StatusSignal<Angle> internalPositionPivot;
+    private final StatusSignal<Angle> encoderAbsolutePositionPivot;
+    private final StatusSignal<Angle> encoderRelativePositionPivot;
+    private final StatusSignal<AngularVelocity> internalVelocityPivot;
+    private final StatusSignal<Voltage> appliedVoltsPivot;
+    private final StatusSignal<Current> supplyCurrentAmpsPivot;
+    private final StatusSignal<Current> torqueCurrentAmpsPivot;
+    private final StatusSignal<Temperature> tempPivot;
 
-  private final double reductionPivot;
+    private final StatusSignal<Angle> internalPositionExtend;
+    private final StatusSignal<Angle> encoderAbsolutePositionExtend;
+    private final StatusSignal<Angle> encoderRelativePositionExtend;
+    private final StatusSignal<AngularVelocity> internalVelocityExtend;
+    private final StatusSignal<Voltage> appliedVoltsExtend;
+    private final StatusSignal<Current> supplyCurrentAmpsExtend;
+    private final StatusSignal<Current> torqueCurrentAmpsExtend;
+    private final StatusSignal<Temperature> tempExtend;
+    
+    //control requests
+    private final TorqueCurrentFOC torqueCurrentFOCPivot = new TorqueCurrentFOC(0.0).withUpdateFreqHz(0.0);
+    private final PositionTorqueCurrentFOC positionTorqueCurrentFOCPivot = new PositionTorqueCurrentFOC(0.0).withUpdateFreqHz(0.0);
+    private final VoltageOut voltageRequestPivot = new VoltageOut(0.0).withUpdateFreqHz(0.0);
 
-  private final Debouncer connectedDebouncer = new Debouncer(0.5);
+    private final TorqueCurrentFOC torqueCurrentFOCExtend = new TorqueCurrentFOC(0.0).withUpdateFreqHz(0.0);
+    private final PositionTorqueCurrentFOC positionTorqueCurrentFOCExtend = new PositionTorqueCurrentFOC(0.0).withUpdateFreqHz(0.0);
+    private final VoltageOut voltageRequestExtend = new VoltageOut(0.0).withUpdateFreqHz(0.0);
 
-  public ArmIOTalonFX(
-      int idPivot,
-      String bus,
-      int currentLimitAmps,
-      boolean invertPivot,
-      boolean brakePivot,
-      double reductionPivot) {
-    this.reductionPivot = reductionPivot;
-    armPivot = new TalonFX(idPivot, bus);
+    //connected debouncers
+    private final Debouncer motorConnectedDebouncer = new Debouncer(0.5);
+    private final Debouncer encoderConnectedDebouncer = new Debouncer(0.5);
 
-    TalonFXConfiguration configPivot = new TalonFXConfiguration();
-    configPivot.Slot0 =
-        new Slot0Configs().withKP(reductionPivot).withKI(reductionPivot).withKD(reductionPivot);
-    configPivot.MotorOutput.Inverted =
-        invertPivot ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
-    configPivot.MotorOutput.NeutralMode =
-        brakePivot ? NeutralModeValue.Brake : NeutralModeValue.Coast;
-    configPivot.CurrentLimits.SupplyCurrentLimit = currentLimitAmps;
-    configPivot.CurrentLimits.SupplyCurrentLimitEnable = true;
-    tryUntilOk(5, () -> armPivot.getConfigurator().apply(configPivot));
+    public ArmIOTalonFX() {
+        talonPivot = new TalonFX(0,"*");
+        talonExtend = new TalonFX(1,"*");
 
-    position = armPivot.getPosition();
-    velocity = armPivot.getVelocity();
+        //configure motors
+        ConfigPivot.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        ConfigPivot.Slot0 = new Slot0Configs().withKG(0.0).withKP(0.0).withKI(0.0).withKD(0.0);
+        ConfigPivot.Feedback.RotorToSensorRatio = reductionPivot;
+        ConfigPivot.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        ConfigPivot.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+        ConfigPivot.Feedback.SensorToMechanismRatio = reductionPivot;
+        ConfigPivot.TorqueCurrent.PeakForwardTorqueCurrent = 40.0;
+        ConfigPivot.TorqueCurrent.PeakReverseTorqueCurrent = -40.0;
+        ConfigPivot.CurrentLimits.StatorCurrentLimit = 40.0;
+        ConfigPivot.CurrentLimits.StatorCurrentLimitEnable = true;
+        ConfigPivot.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        tryUntilOk(5, () -> talonPivot.getConfigurator().apply(ConfigPivot, 0.25));
 
-    appliedVoltage = armPivot.getMotorVoltage();
-    supplyCurrent = armPivot.getSupplyCurrent();
+        ConfigExtend.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        ConfigExtend.Slot0 = new Slot0Configs().withKG(0.0).withKP(0.0).withKI(0.0).withKD(0.0);
+        ConfigExtend.Feedback.RotorToSensorRatio = reductionExtend;
+        ConfigExtend.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        ConfigExtend.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+        ConfigExtend.Feedback.SensorToMechanismRatio = reductionExtend;
+        ConfigExtend.TorqueCurrent.PeakForwardTorqueCurrent = 40.0;
+        ConfigExtend.TorqueCurrent.PeakReverseTorqueCurrent = -40.0;
+        ConfigExtend.CurrentLimits.StatorCurrentLimit = 40.0;
+        ConfigExtend.CurrentLimits.StatorCurrentLimitEnable = true;
+        ConfigExtend.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        tryUntilOk(5, () -> talonExtend.getConfigurator().apply(ConfigExtend, 0.25));
 
-    tryUntilOk(
-        5,
-        () ->
-            BaseStatusSignal.setUpdateFrequencyForAll(
-                50.0, position, velocity, appliedVoltage, supplyCurrent));
-    tryUntilOk(5, () -> armPivot.optimizeBusUtilization(0, 1.0));
-  }
+        //get and set signals
+        internalPositionPivot = talonPivot.getPosition();
+        internalVelocityPivot = talonPivot.getVelocity();
+        appliedVoltsPivot = talonPivot.getMotorVoltage();
+        supplyCurrentAmpsPivot = talonPivot.getSupplyCurrent();
+        torqueCurrentAmpsPivot = talonPivot.getTorqueCurrent();
+        tempPivot = talonPivot.getDeviceTemp();
 
-  @Override
-  public void updateInputs(ArmIOInputs inputs) {
-    inputs.connected =
-        connectedDebouncer.calculate(
-            BaseStatusSignal.refreshAll(position, velocity, appliedVoltage, supplyCurrent).isOK());
-    inputs.positionRads = Units.rotationsToRadians(position.getValueAsDouble()) / reductionPivot;
-    inputs.velocityRadsPerSec =
-        Units.rotationsToRadians(velocity.getValueAsDouble()) / reductionPivot;
-    inputs.appliedVoltage = appliedVoltage.getValueAsDouble();
-    inputs.supplyCurrentAmps = supplyCurrent.getValueAsDouble();
-  }
+        internalPositionExtend = talonExtend.getPosition();
+        internalVelocityExtend = talonExtend.getVelocity();
+        appliedVoltsExtend = talonExtend.getMotorVoltage();
+        supplyCurrentAmpsExtend = talonExtend.getSupplyCurrent();
+        torqueCurrentAmpsExtend = talonExtend.getTorqueCurrent();
+        tempExtend = talonExtend.getDeviceTemp();
 
-  @Override
-  public void runTorqueCurrent(double current) {
-    armPivot.setControl(torqueCurrentFOC.withOutput(current));
-  }
+        BaseStatusSignal.setUpdateFrequencyForAll(
+            50.0,
+            internalPositionPivot,
+            internalVelocityPivot,
+            appliedVoltsPivot,
+            supplyCurrentAmpsPivot,
+            torqueCurrentAmpsPivot,
+            tempPivot,
+            internalPositionExtend,
+            internalVelocityExtend,
+            appliedVoltsExtend,
+            supplyCurrentAmpsExtend,
+            torqueCurrentAmpsExtend,
+            tempExtend
+        );
+        
+        //register signals for refresh
+        PhoenixUtil.registerSignals(
+            internalPositionPivot,
+            internalVelocityPivot,
+            appliedVoltsPivot,
+            supplyCurrentAmpsPivot,
+            torqueCurrentAmpsPivot,
+            tempPivot,
+            internalPositionExtend,
+            internalVelocityExtend,
+            appliedVoltsExtend,
+            supplyCurrentAmpsExtend,
+            torqueCurrentAmpsExtend,
+            tempExtend
+        );
+    }
 
-  @Override
-  public void runVolts(double volts) {
-    armPivot.setControl(voltageOut.withOutput(volts));
-  }
+    @Override
+    public void updateInputs(ArmIOInputs inputs) {
+        inputs.data = 
+            new ArmIOData(
+                motorConnectedDebouncer.calculate(
+                    BaseStatusSignal.isAllGood(
+                        internalPositionPivot,
+                        internalVelocityPivot,
+                        appliedVoltsPivot,
+                        supplyCurrentAmpsPivot,
+                        torqueCurrentAmpsPivot,
+                        tempPivot,
+                        internalPositionExtend,
+                        internalVelocityExtend,
+                        appliedVoltsExtend,
+                        supplyCurrentAmpsExtend,
+                        torqueCurrentAmpsExtend,
+                        tempExtend
+                    )
+                ),
+                Rotation2d.fromRotations(internalPositionPivot.getValueAsDouble()),
+                internalVelocityPivot.getValue().in(RadiansPerSecond),
+                appliedVoltsPivot.getValue().in(Volts),
+                supplyCurrentAmpsPivot.getValue().in(Amps),
+                torqueCurrentAmpsPivot.getValue().in(Amps),
+                tempPivot.getValue().in(Celsius),
+                Rotation2d.fromRotations(internalPositionExtend.getValueAsDouble()),
+                internalVelocityExtend.getValue().in(RadiansPerSecond),
+                appliedVoltsExtend.getValue().in(Volts),
+                supplyCurrentAmpsExtend.getValue().in(Amps),
+                torqueCurrentAmpsExtend.getValue().in(Amps),
+                tempExtend.getValue().in(Celsius)
+            );
+    }
 
-  @Override
-  public void stop() {
-    armPivot.setControl(neutralOut);
-  }
+    @Override
+    public void runOpenLoopPivot(double output) {
+        talonPivot.setControl(torqueCurrentFOCPivot.withOutput(output));
+    }
 
-  @Override
-  public void setBrakeMode(boolean enabled) {
-    new Thread(
-            () ->
-                tryUntilOk(
-                    5,
-                    () ->
-                        armPivot.setNeutralMode(
-                            enabled ? NeutralModeValue.Brake : NeutralModeValue.Coast)))
-        .start();
-  }
+    @Override
+    public void runOpenLoopExtend(double output) {
+        talonExtend.setControl(torqueCurrentFOCExtend.withOutput(output));
+    }
+
+    @Override
+    public void runVoltsPivot(double volts) {
+        talonPivot.setControl(voltageRequestPivot.withOutput(volts));
+    }
+
+    @Override
+    public void runVoltsExtend(double volts) {
+        talonExtend.setControl(voltageRequestExtend.withOutput(volts));
+    }
+
+    @Override
+    public void stop() {
+        talonPivot.stopMotor();
+        talonExtend.stopMotor();
+    }
+
+    @Override
+    public void runPositionPivot(Rotation2d position, double feedforward) {
+        talonPivot.setControl(
+            positionTorqueCurrentFOCPivot
+                .withPosition(position.getRotations())
+                .withFeedForward(feedforward));
+    }
+
+    @Override
+    public void setPIDPivot(double kP, double kI, double kD) {
+        ConfigPivot.Slot0.kP = kP;
+        ConfigPivot.Slot0.kI = kI;
+        ConfigPivot.Slot0.kD = kD;
+        tryUntilOk(5, () -> talonPivot.getConfigurator().apply(ConfigPivot));
+    }
+
+    @Override
+    public void setPIDExtend(double kP, double kI, double kD) {
+        ConfigExtend.Slot0.kP = kP;
+        ConfigExtend.Slot0.kI = kI;
+        ConfigExtend.Slot0.kD = kD;
+        tryUntilOk(5, () -> talonExtend.getConfigurator().apply(ConfigExtend));
+    }
+
+    @Override
+    public void setBrakeModePivot(boolean enabled) {
+        new Thread(
+                () -> {
+                ConfigPivot.MotorOutput.NeutralMode =
+                    enabled ? NeutralModeValue.Brake : NeutralModeValue.Coast;
+                tryUntilOk(5, () -> talonPivot.getConfigurator().apply(ConfigPivot));
+                })
+            .start();
+    }
+
+    @Override
+    public void setBrakeModeExtend(boolean enabled) {
+        new Thread(
+                () -> {
+                ConfigPivot.MotorOutput.NeutralMode =
+                    enabled ? NeutralModeValue.Brake : NeutralModeValue.Coast;
+                tryUntilOk(5, () -> talonPivot.getConfigurator().apply(ConfigPivot));
+                })
+            .start();
+    }
 }
