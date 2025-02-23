@@ -29,8 +29,8 @@ import org.littletonrobotics.junction.Logger;
 public class Arm extends SubsystemBase {
 
   // soft limits
-  public static final Rotation2d minAngle = Rotation2d.fromDegrees(0);
-  public static final Rotation2d maxAngle = Rotation2d.fromDegrees(7);
+  public static final Rotation2d minAngle = Rotation2d.fromRotations(0.4);
+  public static final Rotation2d maxAngle = Rotation2d.fromRotations(6.8);
   public static final Rotation2d minExtend = Rotation2d.fromRotations(0);
   public static final Rotation2d maxExtend = Rotation2d.fromRotations(7);
 
