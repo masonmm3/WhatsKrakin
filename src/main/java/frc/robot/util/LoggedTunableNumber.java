@@ -1,17 +1,17 @@
 package frc.robot.util;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
-
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
-public class LoggedTunableNumber implements DoubleSupplier{
-    /**
- * Class for a tunable number. Gets value from dashboard in tuning mode, returns default if not or
- * value not in dashboard.
- */
+public class LoggedTunableNumber implements DoubleSupplier {
+  /**
+   * Class for a tunable number. Gets value from dashboard in tuning mode, returns default if not or
+   * value not in dashboard.
+   */
   private static final String tableKey = "/Tuning";
 
   private final String key;
@@ -45,8 +45,8 @@ public class LoggedTunableNumber implements DoubleSupplier{
    */
   public LoggedTunableNumber(String dashboardKey, double defaultValue) {
     this(dashboardKey);
-    
   }
+
   public double get() {
     if (!hasDefault) {
       return 0.0;
@@ -66,7 +66,7 @@ public class LoggedTunableNumber implements DoubleSupplier{
     return false;
   }
 
-    /**
+  /**
    * Runs action if any of the tunableNumbers have changed
    *
    * @param id Unique identifier for the caller to avoid conflicts when shared between multiple *
@@ -92,7 +92,3 @@ public class LoggedTunableNumber implements DoubleSupplier{
     return get();
   }
 }
-    
-
-
-
