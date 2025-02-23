@@ -27,6 +27,16 @@ public class LoggedTunableNumber implements DoubleSupplier{
   public LoggedTunableNumber(String dashboardKey) {
     this.key = tableKey + "/" + dashboardKey;
   }
+
+  public void initDefault(double defaultValue) {
+    if (!hasDefault) {
+      hasDefault = true;
+      this.defaultValue = defaultValue;
+      if (Constants.tuningMode) {
+        dashboardNumber = new LoggedNetworkNumber(key, defaultValue);
+      }
+    }
+  }
   /**
    * Create a new LoggedTunableNumber with the default value
    *
