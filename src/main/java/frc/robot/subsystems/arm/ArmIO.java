@@ -4,7 +4,7 @@ import org.littletonrobotics.junction.AutoLog;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 
-public class ArmIO {
+public interface ArmIO {
     @AutoLog
     class ArmIOInputs {
         public ArmIOData data = 
