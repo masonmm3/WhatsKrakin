@@ -85,8 +85,10 @@ public class Arm extends SubsystemBase {
   protected final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
 
   // overrides
-  private BooleanSupplier coastOverride = () -> false;
-  private BooleanSupplier disabledOverride = () -> false;
+  private BooleanSupplier coastOverridePivot = () -> false;
+  private BooleanSupplier disabledOverridePivot = () -> false;
+  private BooleanSupplier coastOverrideExtend = () -> false;
+  private BooleanSupplier disabledOverrideExtend = () -> false;
 
   @AutoLogOutput(key = "Arm/PivotBrakeModeEnabled")
   private boolean brakeModeEnabled = true;
@@ -128,8 +130,8 @@ public class Arm extends SubsystemBase {
     profile =
         new TrapezoidProfile(
             new TrapezoidProfile.Constraints(
-                Units.degreesToRadians(maxVelocityDegPerSec.get()),
-                Units.degreesToRadians(maxAccelerationDegPerSec2.get())));
+                Units.degreesToRadians(maxVelocityDegPerSecPivot.get()),
+                Units.degreesToRadians(maxAccelerationDegPerSec2Pivot.get())));
 
     if (Constants.getRobot() == Constants.RobotType.SIMBOT) {
       new Trigger(() -> DriverStation.getStickButtonPressed(2,1))
@@ -149,6 +151,21 @@ public class Arm extends SubsystemBase {
     if (kPPivot.hasChanged(hashCode()) || kDPivot.hasChanged(hashCode())) {
       armIO.setPIDPivot(kPPivot.get(), 0.0, kDPivot.get());
     }
+    if (kPExtend.hasChanged(hashCode()) || kDExtend.hasChanged(hashCode())) {
+      armIO.setPIDExtend(kPExtend.get(), 0.0, kDExtend.get());
+    }
+    if (maxVelocityDegPerSecPivot.hasChanged(hashCode())
+        || maxAccelerationDegPerSec2Pivot.hasChanged(hashCode())) {
+      profile =
+          new TrapezoidProfile(
+              new TrapezoidProfile.Constraints(
+                  Units.degreesToRadians(maxVelocityDegPerSecPivot.get()),
+                  Units.degreesToRadians(maxAccelerationDegPerSec2Pivot.get())));
+    }
+
+    //set coast mode
+    setBrakeModePivot(!coastOverridePivot.getAsBoolean());
+    setBrakeModeExtend(!coastOverridePivot.getAsBoolean());
 
   }
 
