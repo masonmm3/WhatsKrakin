@@ -20,6 +20,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.Encoder;
 
 public class ArmIOTalonFX implements ArmIO {
   public static final double reduction = 3.0;
@@ -64,6 +65,7 @@ public class ArmIOTalonFX implements ArmIO {
 
     position = armPivot.getPosition();
     velocity = armPivot.getVelocity();
+   
     appliedVoltage = armPivot.getMotorVoltage();
     supplyCurrent = armPivot.getSupplyCurrent();
 

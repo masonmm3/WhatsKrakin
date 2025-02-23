@@ -10,13 +10,16 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.arm.ArmIO.ArmIOInputs;
+import frc.robot.Constants;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+import frc.robot.util.LoggedTunableNumber;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonSetter;
@@ -45,22 +48,33 @@ public class Arm extends SubsystemBase {
     
 
     //Tunable numbers
-    private static final LoggedTunableNumber kP = new LoggedTunableNumber("Arm/kP");
-    private static final LoggedTunableNumber kD = new LoggedTunableNumber("Arm/kD");
-    private static final LoggedTunableNumber kS = new LoggedTunableNumber("Arm/kS");
-    private static final LoggedTunableNumber kG = new LoggedTunableNumber("Arm/kG");
-    private static final LoggedTunableNumber maxVelocityDegPerSec = 
+    private static final LoggedTunableNumber kPPivot = new LoggedTunableNumber("Arm/kP");
+    private static final LoggedTunableNumber kDPivot = new LoggedTunableNumber("Arm/kD");
+    private static final LoggedTunableNumber kSPivot = new LoggedTunableNumber("Arm/kS");
+    private static final LoggedTunableNumber kGPivot = new LoggedTunableNumber("Arm/kG");
+    private static final LoggedTunableNumber maxVelocityDegPerSecPivot = 
     new LoggedTunableNumber("Arm/MaxVelocityDegreesPerSec", 500);
-    private static final LoggedTunableNumber maxAccelerationDegPerSec2 = 
+    private static final LoggedTunableNumber maxAccelerationDegPerSec2Pivot = 
     new LoggedTunableNumber("Arm/MaxAccelerationDegPerSec2", 2000);
-    private static final LoggedTunableNumber staticCharacterizationVelocityThresh = 
+    private static final LoggedTunableNumber staticCharacterizationVelocityThreshPivot = 
     new LoggedTunableNumber("Arm/StaticCharaterizationVelocityThresh", 0.1);
+    private static final LoggedTunableNumber kPExtend = new LoggedTunableNumber("Arm/kP");
+    private static final LoggedTunableNumber kDExtend = new LoggedTunableNumber("Arm/kD");
+    private static final LoggedTunableNumber kSExtend = new LoggedTunableNumber("Arm/kS");
+    private static final LoggedTunableNumber kGExtend = new LoggedTunableNumber("Arm/kG");
+    private static final LoggedTunableNumber maxVelocityDegPerSecExtend = 
+    new LoggedTunableNumber("Arm/MaxVelocityDegreesPerSec", 500);
+    private static final LoggedTunableNumber maxAccelerationDegPerSec2Extend = 
+    new LoggedTunableNumber("Arm/MaxAccelerationDegPerSec2", 2000);
+    private static final LoggedTunableNumber staticCharacterizationVelocityThreshExtend = 
+    new LoggedTunableNumber("Arm/StaticCharaterizationVelocityThresh", 0.1);
+  }
 
 
 
 
     static {
-      switch (Constants.getRobot()) {
+      switch (Constants.RobotType()) {
         case SIMBOT -> {
           kP.initDefault(4000);
           kD.initDefault(1000);
@@ -78,20 +92,19 @@ public class Arm extends SubsystemBase {
       }
     }
 
-    private final ArmIO pivotIo;
-    private final ArmIOInputsAutoLogged pivotInputs = new ArmIOInputsAutoLogged();
-    private final ArmIO extendIO;
-    private final ArmIOInputsAutoLogged extendInputs =  new ArmIOInputsAutoLogged();
+    private final ArmIO armIO;
+    private final ArmIOInputsAutoLogged armInputs = new ArmIOInputsAutoLogged();
+    
 
     private BooleanSupplier coastOverride = () -> false;
     private BooleanSupplier disabledOverride = () -> false;
     
     private TrapezoidProfile profile;
-    @Getter private State setpoint = new State();
+    
     private DoubleSupplier goal = () -> 0.0;
     private boolean stopProfile = false;
-    @Getter private boolean shouldEStop = false;
-    @Setter private boolean isEStopped = false;
+  
+  
 
     // @Getter 
     // @AutoLogOutput (key = "Dispenser/Profile/AtGoal");
@@ -110,27 +123,26 @@ public class Arm extends SubsystemBase {
     private final Alert extendMotorDisconnectedAlert =
     new Alert("Arm extend motor disconnected!", Alert.AlertType.kWarning);
 
-    public Arm(ArmIO pivotIo, ArmIO extendIO) {
-      this.pivotIo = pivotIo;
-      this.extendIO = extendIO;
-
+    public Arm(ArmIO armIO) {
+      this.armIO = armIO;
+    
       profile =
       new TrapezoidProfile(
+        new TrapezoidProfile.Constraints(
         Units.degreesToRadians(maxVelocityDegPerSec.get()),
-        Units.degreesToRadians(maxAccelerationDegPerSec2.get()));
+            Units.degreesToRadians(maxAccelerationDegPerSec2.get())));
     }
-  }
+  
+
 
 
     
 
-  }
+  
 
   public void periodic() {
-    pivotIo.updateInputs(pivotInputs);
-    Logger.processInputs("Arm/Pivot", pivotInputs);
-    extendIO.updateInputs(extendInputs);
-    Logger.processInputs("Arm/Extend", extendInputs);
+    armIO.updateInputs(armInputs);
+    Logger.processInputs("Arm", armInputs);
     io.updateInputs(inputs);
     Logger.processInputs(name, inputs);
     disconnected.set(!inputs.connected);
@@ -140,4 +152,7 @@ public class Arm extends SubsystemBase {
   public Command runArm(double inputVolts) {
     return startEnd(() -> io.runVolts(inputVolts), () -> io.stop());
   }
+
 }
+
+

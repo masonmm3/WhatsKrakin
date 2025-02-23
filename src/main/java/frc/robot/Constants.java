@@ -13,6 +13,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -23,7 +25,21 @@ import edu.wpi.first.wpilibj.RobotBase;
 public final class Constants {
   public static final Mode simMode = Mode.SIM;
   public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
+  public static final double loopPeriodSecs = 0.02;
+  private static RobotType robotType = RobotType.COMPBOT;
+  public static final boolean tuningMode = false;
 
+  @SuppressWarnings("resource")
+  public static RobotType getRobot() {
+    if (!disableHAL && RobotBase.isReal() && robotType == RobotType.SIMBOT) {
+      new Alert("Invalid robot selected, using competition robot as default.", AlertType.kError)
+          .set(true);
+      robotType = RobotType.COMPBOT;
+    }
+    return robotType;
+  }
+  
+  
   public static enum Mode {
     /** Running on a real robot. */
     REAL,
@@ -34,4 +50,16 @@ public final class Constants {
     /** Replaying from a log file. */
     REPLAY
   }
+  public enum RobotType {
+    SIMBOT,
+    DEVBOT,
+    COMPBOT
+  }
+
+  public static boolean disableHAL = false;
+
+  public static void disableHAL() {
+    disableHAL = true;
+}
+
 }

@@ -2,6 +2,9 @@ package frc.robot.subsystems.arm;
 
 import org.littletonrobotics.junction.AutoLog;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+
 public interface ArmIO {
   @AutoLog
   static class ArmIOInputs {
@@ -19,6 +22,10 @@ public interface ArmIO {
   default void runVolts(double volts) {}
 
   default void stop() {}
+  
+  default void runPosition(Rotation2d position, double feedforward){}
+
+  default void setPID(double kP, double kI, double kD){}
 
   default void setBrakeMode(boolean enabled) {}
 }
