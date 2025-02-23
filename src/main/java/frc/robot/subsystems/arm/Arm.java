@@ -15,16 +15,14 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
+import frc.robot.Constants.RobotType;
+import frc.robot.util.EqualsUtil;
+import frc.robot.util.LoggedTracer;
 import frc.robot.util.LoggedTunableNumber;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
-
 import lombok.Getter;
-import frc.robot.Constants.RobotType;
-import frc.robot.util.EqualsUtil;
-import frc.robot.util.LoggedTracer;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -57,8 +55,7 @@ public class Arm extends SubsystemBase {
       new LoggedTunableNumber("Arm/MaxAccelerationDegPerSec2", 2000);
   private static final LoggedTunableNumber staticCharacterizationVelocityThreshExtend =
       new LoggedTunableNumber("Arm/StaticCharaterizationVelocityThresh", 0.1);
-  public static final LoggedTunableNumber tolerance = 
-    new LoggedTunableNumber("Arm/Tolerance", 0.1);
+  public static final LoggedTunableNumber tolerance = new LoggedTunableNumber("Arm/Tolerance", 0.1);
 
   static {
     switch (Constants.getRobot()) {
@@ -113,10 +110,10 @@ public class Arm extends SubsystemBase {
   @AutoLogOutput private boolean hasCoral = false;
 
   //  @Setter private double extendVolts = 0.0;
-   // @Setter private double pivotAngle = 0.0;
+  // @Setter private double pivotAngle = 0.0;
 
-   private Debouncer armDebouncer = new Debouncer(0.1);
-   private Debouncer toleranceDebouncer = new Debouncer(0.25, DebounceType.kRising);
+  private Debouncer armDebouncer = new Debouncer(0.1);
+  private Debouncer toleranceDebouncer = new Debouncer(0.25, DebounceType.kRising);
 
   // Disconnected alerts
   private final Alert pivotMotorDisconnectedAlert =
@@ -140,8 +137,8 @@ public class Arm extends SubsystemBase {
                 Units.degreesToRadians(maxAccelerationDegPerSec2Pivot.get())));
 
     if (Constants.getRobot() == Constants.RobotType.SIMBOT) {
-      new Trigger(() -> DriverStation.getStickButtonPressed(2,1))
-        .onTrue(Commands.runOnce(() -> hasCoral = !hasCoral));
+      new Trigger(() -> DriverStation.getStickButtonPressed(2, 1))
+          .onTrue(Commands.runOnce(() -> hasCoral = !hasCoral));
     }
   }
 
@@ -150,10 +147,9 @@ public class Arm extends SubsystemBase {
     Logger.processInputs("Arm", armInputs);
 
     pivotMotorDisconnectedAlert.set(
-      !armInputs.data.motorsConnected() && Constants.getRobot() == RobotType.COMPBOT
-    );
+        !armInputs.data.motorsConnected() && Constants.getRobot() == RobotType.COMPBOT);
 
-    //update tunable numbers
+    // update tunable numbers
     if (kPPivot.hasChanged(hashCode()) || kDPivot.hasChanged(hashCode())) {
       ArmIO.setPIDPivot(kPPivot.get(), 0.0, kDPivot.get());
     }
@@ -169,52 +165,55 @@ public class Arm extends SubsystemBase {
                   Units.degreesToRadians(maxAccelerationDegPerSec2Pivot.get())));
     }
 
-    //set coast mode
+    // set coast mode
     setBrakeModePivot(!coastOverridePivot.getAsBoolean());
     setBrakeModeExtend(!coastOverridePivot.getAsBoolean());
 
-    //Run profile
-    final boolean shouldRunProfile = 
-    !stopProfile && !coastOverridePivot.getAsBoolean()
-      && !disabledOverridePivot.getAsBoolean() 
-      && !isEStopped
-      && DriverStation.isEnabled();
-      Logger.recordOutput("Dispenser/RunningProfile", shouldRunProfile);
+    // Run profile
+    final boolean shouldRunProfile =
+        !stopProfile
+            && !coastOverridePivot.getAsBoolean()
+            && !disabledOverridePivot.getAsBoolean()
+            && !isEStopped
+            && DriverStation.isEnabled();
+    Logger.recordOutput("Dispenser/RunningProfile", shouldRunProfile);
 
-
-    //check is out of tolerance 
-    boolean outOfTolerance = Math.abs(getPivotAngle().getRadians() - setpoint.position)  > tolerance.get();   
-    shouldEStop = toleranceDebouncer.calculate(outOfTolerance && shouldRunProfile)
-    || getPivotAngle().getRadians() < minAngle.getRadians() ||
-    getPivotAngle().getRadians() > maxAngle.getRadians();
+    // check is out of tolerance
+    boolean outOfTolerance =
+        Math.abs(getPivotAngle().getRadians() - setpoint.position) > tolerance.get();
+    shouldEStop =
+        toleranceDebouncer.calculate(outOfTolerance && shouldRunProfile)
+            || getPivotAngle().getRadians() < minAngle.getRadians()
+            || getPivotAngle().getRadians() > maxAngle.getRadians();
 
     if (shouldRunProfile) {
-      //clamp goal
-      var goalState = 
-      new State(
-        MathUtil.clamp(goal.getAsDouble(), minAngle.getRadians(), maxAngle.getRadians()), 0.0);
+      // clamp goal
+      var goalState =
+          new State(
+              MathUtil.clamp(goal.getAsDouble(), minAngle.getRadians(), maxAngle.getRadians()),
+              0.0);
       setpoint = profile.calculate(Constants.loopPeriodSecs, setpoint, goalState);
       ArmIO.runPositionPivot(
-        Rotation2d.fromRadians(setpoint.position),
-        kSPivot.get() * Math.signum(setpoint.position) +
-        kGPivot.get() * getPivotAngle().getCos());
-        //check at goal
-    atGoal = 
-      EqualsUtil.epsilonEquals(setpoint.position, goalState.position)
-        && EqualsUtil.epsilonEquals(setpoint.velocity, 0.0);
+          Rotation2d.fromRadians(setpoint.position),
+          kSPivot.get() * Math.signum(setpoint.position)
+              + kGPivot.get() * getPivotAngle().getCos());
+      // check at goal
+      atGoal =
+          EqualsUtil.epsilonEquals(setpoint.position, goalState.position)
+              && EqualsUtil.epsilonEquals(setpoint.velocity, 0.0);
 
-    //Log state
-    Logger.recordOutput("Arm/Profile/SetpointPositionRad", setpoint.position);
-    Logger.recordOutput("Arm/Profile/SetpointVelocityRadPerSec", setpoint.velocity);
-    Logger.recordOutput("Arm/Profile/GoalPositionRad", goalState.position);
+      // Log state
+      Logger.recordOutput("Arm/Profile/SetpointPositionRad", setpoint.position);
+      Logger.recordOutput("Arm/Profile/SetpointVelocityRadPerSec", setpoint.velocity);
+      Logger.recordOutput("Arm/Profile/GoalPositionRad", goalState.position);
     } else {
-      //Reset setpoint
+      // Reset setpoint
       setpoint = new State(getPivotAngle().getRadians(), 0.0);
 
-      //Clear logs
+      // Clear logs
       Logger.recordOutput("Arm/Profile/SetpointPositionRad", 0.0);
-    Logger.recordOutput("Arm/Profile/SetpointVelocityRadPerSec", 0.0);
-    Logger.recordOutput("Arm/Profile/GoalPositionRad", 0.0);
+      Logger.recordOutput("Arm/Profile/SetpointVelocityRadPerSec", 0.0);
+      Logger.recordOutput("Arm/Profile/GoalPositionRad", 0.0);
     }
     // Log State
     Logger.recordOutput("Arm/CoastOverridePivot", coastOverridePivot.getAsBoolean());
@@ -222,14 +221,13 @@ public class Arm extends SubsystemBase {
     Logger.recordOutput("Arm/DisabledOverrideExtend", disabledOverrideExtend.getAsBoolean());
     Logger.recordOutput("Arm/DisabledOverridePivot", disabledOverridePivot.getAsBoolean());
 
-    //Record cycle time
+    // Record cycle time
     LoggedTracer.record("Arm");
-
   }
 
   public void setGoal(Supplier<Rotation2d> goal) {
-    this.goal = 
-      () -> MathUtil.inputModulus(goal.get().getRadians(), -3.0 * Math.PI / 2.0, Math.PI / 2.0);
+    this.goal =
+        () -> MathUtil.inputModulus(goal.get().getRadians(), -3.0 * Math.PI / 2.0, Math.PI / 2.0);
     atGoal = false;
   }
 
@@ -237,56 +235,60 @@ public class Arm extends SubsystemBase {
     return goal.getAsDouble();
   }
 
-  public Rotation2d getPivotAngle(){
+  public Rotation2d getPivotAngle() {
     return armInputs.data.internalPositionPivot();
   }
 
-  public void setOverrides(BooleanSupplier coastOverridePivot, BooleanSupplier coastOverrideExtend, BooleanSupplier disabledOverridePivot, BooleanSupplier disabledOverrideExtend){
+  public void setOverrides(
+      BooleanSupplier coastOverridePivot,
+      BooleanSupplier coastOverrideExtend,
+      BooleanSupplier disabledOverridePivot,
+      BooleanSupplier disabledOverrideExtend) {
     this.coastOverrideExtend = coastOverrideExtend;
     this.coastOverridePivot = coastOverridePivot;
     this.disabledOverrideExtend = disabledOverrideExtend;
-  this.disabledOverridePivot = disabledOverridePivot;
+    this.disabledOverridePivot = disabledOverridePivot;
   }
 
-  private void setBrakeModeExtend(boolean enabled){
+  private void setBrakeModeExtend(boolean enabled) {
     if (brakeModeEnabled == enabled) return;
     brakeModeEnabled = enabled;
     ArmIO.setBrakeModeExtend(enabled);
   }
-  private void setBrakeModePivot(boolean enabled){
+
+  private void setBrakeModePivot(boolean enabled) {
     if (brakeModeEnabled == enabled) return;
     brakeModeEnabled = enabled;
     ArmIO.setBrakeModePivot(enabled);
   }
 
-
   public Command staticCharacterization(double outputRampRate) {
     final StaticCharacterizationState state = new StaticCharacterizationState();
     Timer timer = new Timer();
     return Commands.startRun(
-      () -> {
-        stopProfile = true;
-        timer.restart();
-      },
-      () -> {
-        state.characterizationOutput = outputRampRate * timer.get();
-        ArmIO.runOpenLoopPivot(state.characterizationOutput);
-        Logger.recordOutput("Arm/staticCharacterizationOutputPivot", state.characterizationOutput);
-      })
-    .until(
-      () -> 
-      armInputs.data.velocityPivotRadPerSec() >= staticCharacterizationVelocityThreshPivot.get())
-    .finallyDo(
-        () -> {
-          stopProfile = false;
-          timer.stop();
-          Logger.recordOutput("Arm/CharacterizationOutput", state.characterizationOutput);
-        }
-      );
+            () -> {
+              stopProfile = true;
+              timer.restart();
+            },
+            () -> {
+              state.characterizationOutput = outputRampRate * timer.get();
+              ArmIO.runOpenLoopPivot(state.characterizationOutput);
+              Logger.recordOutput(
+                  "Arm/staticCharacterizationOutputPivot", state.characterizationOutput);
+            })
+        .until(
+            () ->
+                armInputs.data.velocityPivotRadPerSec()
+                    >= staticCharacterizationVelocityThreshPivot.get())
+        .finallyDo(
+            () -> {
+              stopProfile = false;
+              timer.stop();
+              Logger.recordOutput("Arm/CharacterizationOutput", state.characterizationOutput);
+            });
   }
 
   private static class StaticCharacterizationState {
     public double characterizationOutput = 0.0;
   }
 }
-
