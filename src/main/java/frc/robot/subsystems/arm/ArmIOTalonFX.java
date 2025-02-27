@@ -4,12 +4,15 @@ import static edu.wpi.first.units.Units.*;
 import static frc.robot.util.PhoenixUtil.tryUntilOk;
 
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -30,12 +33,15 @@ public class ArmIOTalonFX implements ArmIO {
   private static final Rotation2d offsetExtend = new Rotation2d();
 
   // hardware
+   private final CANBus kCANBus = new CANBus("rio");
   private final TalonFX talonPivot;
   private final TalonFX talonExtend;
+  private final CANcoder canCoder;
 
   // config
   private final TalonFXConfiguration ConfigPivot = new TalonFXConfiguration();
   private final TalonFXConfiguration ConfigExtend = new TalonFXConfiguration();
+  private final CANcoder configCANcoder = new CANcoder(0);
 
   // status signals
   private final StatusSignal<Angle> internalPositionPivot;
@@ -64,6 +70,7 @@ public class ArmIOTalonFX implements ArmIO {
   private final PositionTorqueCurrentFOC positionTorqueCurrentFOCExtend =
       new PositionTorqueCurrentFOC(0.0).withUpdateFreqHz(0.0);
   private final VoltageOut voltageRequestExtend = new VoltageOut(0.0).withUpdateFreqHz(0.0);
+  
 
   // connected debouncers
   private final Debouncer motorConnectedDebouncer = new Debouncer(0.5);
@@ -143,6 +150,24 @@ public class ArmIOTalonFX implements ArmIO {
         supplyCurrentAmpsExtend,
         torqueCurrentAmpsExtend,
         tempExtend);
+
+        MotionMagicConfigs extendMM = ConfigExtend.MotionMagic;
+        extendMM.withMotionMagicCruiseVelocity(RotationsPerSecond.of(5)) // 5 (mechanism) rotations per second cruise
+           .withMotionMagicAcceleration(RotationsPerSecondPerSecond.of(10)) // Take approximately 0.5 seconds to reach max vel
+           // Take approximately 0.1 seconds to reach max accel 
+           .withMotionMagicJerk(RotationsPerSecondPerSecond.per(Second).of(100));
+     
+           MotionMagicConfigs rotateMM = ConfigPivot.MotionMagic;
+           rotateMM.withMotionMagicCruiseVelocity(RotationsPerSecond.of(5)) // 5 (mechanism) rotations per second cruise
+             .withMotionMagicAcceleration(RotationsPerSecondPerSecond.of(10)) // Take approximately 0.5 seconds to reach max vel
+             // Take approximately 0.1 seconds to reach max accel 
+             .withMotionMagicJerk(RotationsPerSecondPerSecond.per(Second).of(100));
+     
+                 /* User can change the configs if they want, or leave it empty for factory-default */
+                 configCANcoder.getConfigurator().apply(toApply);
+     
+         /* Speed up signals to an appropriate rate */
+         BaseStatusSignal.setUpdateFrequencyForAll(100, configCANcoder.getPosition(), configCANcoder.getVelocity());
   }
 
   @Override
@@ -248,4 +273,7 @@ public class ArmIOTalonFX implements ArmIO {
             })
         .start();
   }
+
+  
+  
 }
