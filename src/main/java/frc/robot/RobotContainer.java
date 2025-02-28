@@ -26,6 +26,11 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.SuperStructure.SuperStructure;
+import frc.robot.subsystems.SuperStructure.Arm.Arm;
+import frc.robot.subsystems.SuperStructure.Arm.ArmTalonFx;
+import frc.robot.subsystems.SuperStructure.Extension.Extension;
+import frc.robot.subsystems.SuperStructure.Extension.ExtensionTalonFx;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -48,6 +53,10 @@ public class RobotContainer {
   // Subsystems
   private final Vision vision;
   private final Drive drive;
+
+  private Extension extension;
+  private Arm arm;
+  private final SuperStructure superStructure;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -77,6 +86,9 @@ public class RobotContainer {
                 // new VisionIOPhotonVision(camera2Name, robotToCamera2),
                 // new VisionIOPhotonVision(camera3Name, robotToCamera3)
                 );
+        arm = new Arm(new ArmTalonFx());
+        extension = new Extension(new ExtensionTalonFx());
+        superStructure = new SuperStructure(arm, extension);
 
         break;
 
@@ -98,6 +110,7 @@ public class RobotContainer {
                 // new VisionIOPhotonVisionSim(camera2Name, robotToCamera2, drive::getPose),
                 // new VisionIOPhotonVisionSim(camera3Name, robotToCamera3, drive::getPose)
                 );
+        superStructure = new SuperStructure(null, null);
         break;
 
       default:
@@ -111,6 +124,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        superStructure = new SuperStructure(null, null);
         break;
     }
 

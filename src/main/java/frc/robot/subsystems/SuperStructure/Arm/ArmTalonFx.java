@@ -5,4 +5,4 @@
 package frc.robot.subsystems.SuperStructure.Arm;
 
 /** Add your docs here. */
-public class ArmTalonFx implements ArmIO{}
+public class ArmTalonFx implements ArmIO {}

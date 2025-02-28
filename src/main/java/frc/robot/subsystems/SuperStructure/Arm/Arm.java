@@ -8,15 +8,15 @@ import org.littletonrobotics.junction.Logger;
 
 /** Add your docs here. */
 public class Arm {
-    private ArmIO io;
-    private ArmIOInputsAutoLogged inputs;
+  private ArmIO io;
+  private ArmIOInputsAutoLogged inputs;
 
-    public Arm(ArmIO io) {
-        this.io = io;
+  public Arm(ArmIO io) {
+    this.io = io;
+  }
 
-    }
-
-    public void armPeriodic() {
-        Logger.processInputs("Arm/Pivot", inputs);
-    }
+  public void armPeriodic() {
+    io.updateInputs(inputs);
+    Logger.processInputs("Arm/Pivot", inputs);
+  }
 }

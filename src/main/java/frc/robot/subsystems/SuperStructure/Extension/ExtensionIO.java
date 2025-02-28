@@ -11,4 +11,6 @@ public interface ExtensionIO {
 
   @AutoLog
   public static class ExtensionIOInputs {}
+
+  public default void updateInputs(ExtensionIOInputs inputs) {}
 }

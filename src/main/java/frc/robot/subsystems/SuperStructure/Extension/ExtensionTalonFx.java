@@ -5,4 +5,4 @@
 package frc.robot.subsystems.SuperStructure.Extension;
 
 /** Add your docs here. */
-public class ExtensionTalonFx implements ExtensionIO{}
+public class ExtensionTalonFx implements ExtensionIO {}

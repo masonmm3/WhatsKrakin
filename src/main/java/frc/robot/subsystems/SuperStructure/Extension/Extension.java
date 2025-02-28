@@ -8,15 +8,15 @@ import org.littletonrobotics.junction.Logger;
 
 /** Add your docs here. */
 public class Extension {
-    private ExtensionIO io;
-    private ExtensionIOInputsAutoLogged inputs;
+  private ExtensionIO io;
+  private ExtensionIOInputsAutoLogged inputs;
 
-    public Extension(ExtensionIO io) {
-        this.io = io;
+  public Extension(ExtensionIO io) {
+    this.io = io;
+  }
 
-    }
-
-    public void armPeriodic() {
-        Logger.processInputs("Arm/Pivot", inputs);
-    }
+  public void armPeriodic() {
+    io.updateInputs(inputs);
+    Logger.processInputs("Arm/Pivot", inputs);
+  }
 }
