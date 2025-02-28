@@ -15,7 +15,10 @@ public class Extension {
     this.io = io;
   }
 
-  public void armPeriodic() {
+  /**
+  * updates extension values periodically
+  */
+  public void extensionPeriodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Arm/Pivot", inputs);
   }

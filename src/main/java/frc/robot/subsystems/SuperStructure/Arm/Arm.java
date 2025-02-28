@@ -15,6 +15,9 @@ public class Arm {
     this.io = io;
   }
 
+  /**
+  * updates arm values periodically
+  */
   public void armPeriodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Arm/Pivot", inputs);

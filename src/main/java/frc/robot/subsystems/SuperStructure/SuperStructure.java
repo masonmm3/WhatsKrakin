@@ -16,4 +16,12 @@ public class SuperStructure {
     this.arm = arm;
     this.extension = extension;
   }
+
+  /**
+ * updates superstructue values periodically
+ */
+public void structPeriodic() {
+    arm.armPeriodic();
+    extension.extensionPeriodic();
+  }
 }
