@@ -196,7 +196,7 @@ public class RobotContainer {
             arm, () -> controllerOperator.getLeftY())); // Move arm with left joystick
         
         new JoystickButton(controllerOperator, XboxController.Button.kB.value)
-            .whileTrue(new ExtendArmCommand(armExtend, () -> controllerOperator.getRightY()))); // Extend with right joystick
+            .whileTrue(new ExtendArmCommand(armExtend, () -> controllerOperator.getRightY())); // Extend with right joystick
 
   }
 
