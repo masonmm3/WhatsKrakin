@@ -1,0 +1,43 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "sRight-N Path"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "N-Coral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Coral-J"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "J-Coral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Coral-K"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
