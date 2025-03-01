@@ -16,6 +16,7 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -24,8 +25,17 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.Auto.ArmL4;
+import frc.robot.commands.Auto.ArmPrep;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.SuperStructure.Arm.Arm;
+import frc.robot.subsystems.SuperStructure.Arm.ArmSim;
+import frc.robot.subsystems.SuperStructure.Arm.ArmTalonFx;
+import frc.robot.subsystems.SuperStructure.Extension.Extension;
+import frc.robot.subsystems.SuperStructure.Extension.ExtensionSim;
+import frc.robot.subsystems.SuperStructure.Extension.ExtensionTalonFx;
+import frc.robot.subsystems.SuperStructure.SuperStructure;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -36,6 +46,7 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+import frc.robot.util.IO;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -46,14 +57,25 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  */
 public class RobotContainer {
   // Subsystems
+  @SuppressWarnings("unused")
   private final Vision vision;
+
   private final Drive drive;
+
+  public static IO io = new IO();
+  public static Extension extension;
+  public static Arm arm;
+  public static SuperStructure superStructure;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
+
+  private Command ArmL4 = new ArmL4();
+  private Command ArmPrep = new ArmPrep();
+  // TODO make collection command
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -77,6 +99,9 @@ public class RobotContainer {
                 // new VisionIOPhotonVision(camera2Name, robotToCamera2),
                 // new VisionIOPhotonVision(camera3Name, robotToCamera3)
                 );
+        arm = new Arm(new ArmTalonFx());
+        extension = new Extension(new ExtensionTalonFx());
+        superStructure = new SuperStructure(arm, extension);
 
         break;
 
@@ -98,6 +123,9 @@ public class RobotContainer {
                 // new VisionIOPhotonVisionSim(camera2Name, robotToCamera2, drive::getPose),
                 // new VisionIOPhotonVisionSim(camera3Name, robotToCamera3, drive::getPose)
                 );
+        arm = new Arm(new ArmSim());
+        extension = new Extension(new ExtensionSim());
+        superStructure = new SuperStructure(arm, extension);
         break;
 
       default:
@@ -111,8 +139,12 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        superStructure = new SuperStructure(null, null);
         break;
     }
+
+    NamedCommands.registerCommand("L4", ArmL4);
+    NamedCommands.registerCommand("Prep", ArmPrep);
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
