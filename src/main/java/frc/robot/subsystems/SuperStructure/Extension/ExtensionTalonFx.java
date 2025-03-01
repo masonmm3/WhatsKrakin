@@ -89,6 +89,10 @@ public class ExtensionTalonFx implements ExtensionIO {
     return _extendMotorK.getPosition().getValueAsDouble() * (2 * Math.PI * 4);
   }
 
+  @Override
+  public void updateInputs(ExtensionIOInputs inputs) {
+    inputs.extend = getExtend();
+  }
   // TODO zero using absolute encoder
   // TODO add input loggging
 }

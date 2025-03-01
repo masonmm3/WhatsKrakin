@@ -65,7 +65,7 @@ public class SuperStructure {
     }
 
     if (drRt && drLt < 0.1) { // drop angle to score
-      armAngle -= 0;
+      armAngle -= SuperStructureConstants.scoreAngleDrop;
     }
 
     arm.setPosition(new Rotation2d(Units.degreesToRadians(armAngle)));

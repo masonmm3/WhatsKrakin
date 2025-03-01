@@ -97,6 +97,10 @@ public class ArmTalonFx implements ArmIO {
     return new Rotation2d(
         Units.rotationsToRadians(_armEncoder.getAbsolutePosition().getValueAsDouble()));
   }
-
+  
+  @Override
+  public void updateInputs(ArmIOInputs inputs) {
+    inputs.angle = getAngle().getDegrees();
+  }
   // TODO add Input logging
 }
