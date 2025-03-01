@@ -7,6 +7,7 @@ package frc.robot.subsystems.SuperStructure;
 /** Add your docs here. */
 public final class SuperStructureConstants {
 
+    //TODO setup Constants
     public static int ArmId = 0;
     public static int ArmEncoderId = 0;
     public static int ExtensionId = 0;

@@ -7,6 +7,7 @@ package frc.robot.commands.Auto;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.SuperStructure.SuperStructureConstants;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ArmPrep extends Command {
@@ -27,8 +28,8 @@ public class ArmPrep extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.superStructure.setArm(90);
-    RobotContainer.superStructure.setExtension(0);
+    RobotContainer.superStructure.setArm(SuperStructureConstants.PrepAngle);
+    RobotContainer.superStructure.setExtension(SuperStructureConstants.PrepExtend);
   }
 
   // Called once the command ends or is interrupted.

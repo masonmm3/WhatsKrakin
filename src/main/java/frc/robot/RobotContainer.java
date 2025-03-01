@@ -16,6 +16,8 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -25,6 +27,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.Auto.ArmL4;
+import frc.robot.commands.Auto.ArmPrep;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.SuperStructure.SuperStructure;
 import frc.robot.subsystems.SuperStructure.Arm.Arm;
@@ -53,6 +57,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  */
 public class RobotContainer {
   // Subsystems
+  @SuppressWarnings("unused")
   private final Vision vision;
   private final Drive drive;
 
@@ -66,6 +71,10 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
+
+  private Command ArmL4 = new ArmL4();
+  private Command ArmPrep = new ArmPrep();
+  //TODO make collection command
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -130,6 +139,9 @@ public class RobotContainer {
         superStructure = new SuperStructure(null, null);
         break;
     }
+
+    NamedCommands.registerCommand("L4", ArmL4);
+    NamedCommands.registerCommand("Prep", ArmPrep);
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
