@@ -21,17 +21,15 @@ public class SuperStructure {
     this.arm = arm;
     this.extension = extension;
 
+    lastPose = "";
     armAngle = 0;
     extendDistance = 0;
-
   }
 
-  /**
- * updates superstructue values periodically
- */
+  /** updates superstructue values periodically */
   public void structPeriodic() {
-    arm.armPeriodic();
-    extension.extensionPeriodic();
+      arm.armPeriodic();
+      extension.extensionPeriodic();
   }
 
   /**
@@ -41,10 +39,11 @@ public class SuperStructure {
    * @param opX
    * @param drRt
    * @param drLt
-   * 
-   * Runs the arm in simple teleop control mode (very dumb do not use outside extreme circumstance)
+   *     <p>Runs the arm in simple teleop control mode (very dumb do not use outside extreme
+   *     circumstance)
    */
-  public void armTeleop(boolean opA, boolean opB, boolean opY, boolean opX, boolean drRt, double drLt) {
+  public void armTeleop(
+      boolean opA, boolean opB, boolean opY, boolean opX, boolean drRt, double drLt) {
     if (opA) {
       armAngle = SuperStructureConstants.L1Angle;
       extendDistance = SuperStructureConstants.L1Extend;
@@ -65,14 +64,13 @@ public class SuperStructure {
       extendDistance = SuperStructureConstants.CollectExtend;
     }
 
-    if(drRt && drLt < 0.1) { //drop angle to score
+    if (drRt && drLt < 0.1) { // drop angle to score
       armAngle -= 0;
     }
 
     arm.setPosition(new Rotation2d(Units.degreesToRadians(armAngle)));
 
     extension.extendToDistance(extendDistance);
-
   }
 
   /**
@@ -82,29 +80,40 @@ public class SuperStructure {
    * @param opX
    * @param drRt
    * @param drLt
-   * 
-   * runs the arm in advanced mode runing each in a sequence
+   *     <p>runs the arm in advanced mode runing each in a sequence
    */
-  public void advancedArmTeleop(boolean opA, boolean opB, boolean opY, boolean opX, boolean drRt, double drLt, boolean opLb, boolean opRb) {
+  public void advancedArmTeleop(
+      boolean opA,
+      boolean opB,
+      boolean opY,
+      boolean opX,
+      boolean drRt,
+      double drLt,
+      boolean opLb,
+      boolean opRb) {
 
-    //protect against multiple cases
-    if (lastPose == "S" && arm.atTarget()) {
+    // protect against multiple cases
+    if ((opLb && opRb)) {
+      armAngle = SuperStructureConstants.HomeAngle;
+      extendDistance = SuperStructureConstants.HomeExtend;
+      lastPose = "";
+    }
+    else if (lastPose == "S" && arm.atTarget() && drRt) {
       extendDistance -= SuperStructureConstants.scoreExtendDrop;
       armAngle -= SuperStructureConstants.scoreAngleDrop;
       lastPose = "D";
-    } else if (lastPose == "D" && arm.atTarget()) {
+    } else if (lastPose == "D" && arm.atTarget() && !drRt) {
       extendDistance = SuperStructureConstants.HomeExtend;
       lastPose = "R";
     } else if (lastPose == "R" && arm.atTarget() && extension.atExtension()) {
       extendDistance = SuperStructureConstants.HomeExtend;
       armAngle = SuperStructureConstants.HomeAngle;
       lastPose = "";
-    }
-    //Go to prep pose (should be less than 180 from stow but within 90 of final target)
+    } // Go to prep pose (should be less than 180 from stow but within 90 of final target)
     else if (opA) {
       armAngle = SuperStructureConstants.PrepAngle;
       extendDistance = SuperStructureConstants.PrepExtend;
-      lastPose = "A"; //should orbably be enum or vars in a constants class
+      lastPose = "A"; // should orbably be enum or vars in a constants class
     } else if (opB) {
       armAngle = SuperStructureConstants.PrepAngle;
       extendDistance = SuperStructureConstants.PrepExtend;
@@ -125,9 +134,8 @@ public class SuperStructure {
       armAngle = SuperStructureConstants.CollectPrepAngle;
       extendDistance = SuperStructureConstants.CollectPrepExtend;
       lastPose = "";
-    } 
-    //actuall scoring pose to move to after releasing
-    else if (!opA && lastPose == "A" && arm.atTarget()) { 
+    } // actuall scoring pose to move to after releasing
+    else if (!opA && lastPose == "A" && arm.atTarget()) {
       armAngle = SuperStructureConstants.L1Angle;
       extendDistance = SuperStructureConstants.L1Extend;
       lastPose = "S";
@@ -143,8 +151,7 @@ public class SuperStructure {
       armAngle = SuperStructureConstants.L4Angle;
       extendDistance = SuperStructureConstants.L4Extend;
       lastPose = "S";
-    } 
-    //Home Pose
+    } // Home Pose
     else if (lastPose == "" || (opLb && opRb)) {
       armAngle = SuperStructureConstants.HomeAngle;
       extendDistance = SuperStructureConstants.HomeExtend;

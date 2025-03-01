@@ -159,8 +159,18 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    //RobotContainer.superStructure.armTeleop(RobotContainer.io.getOpA(), RobotContainer.io.getOPB(), RobotContainer.io.getOpX(), RobotContainer.io.getOpX(), RobotContainer.io.getDrRTrigger(), RobotContainer.io.getDrLt()); //Might be literal suicide
-    RobotContainer.superStructure.advancedArmTeleop(RobotContainer.io.getOpA(), RobotContainer.io.getOPB(), RobotContainer.io.getOpX(), RobotContainer.io.getOpX(), RobotContainer.io.getDrRTrigger(), RobotContainer.io.getDrLt(), RobotContainer.io.getOPLB(), RobotContainer.io.getOpRB());
+    // RobotContainer.superStructure.armTeleop(RobotContainer.io.getOpA(),
+    // RobotContainer.io.getOPB(), RobotContainer.io.getOpY(), RobotContainer.io.getOpX(),
+    // RobotContainer.io.getDrRTrigger(), RobotContainer.io.getDrLt()); //Might be literal suicide
+    RobotContainer.superStructure.advancedArmTeleop(
+        RobotContainer.io.getOpA(),
+        RobotContainer.io.getOPB(),
+        RobotContainer.io.getOpY(),
+        RobotContainer.io.getOpX(),
+        RobotContainer.io.getDrRTrigger(),
+        RobotContainer.io.getDrLt(),
+        RobotContainer.io.getOPLB(),
+        RobotContainer.io.getOpRB());
   }
 
   /** This function is called once when test mode is enabled. */

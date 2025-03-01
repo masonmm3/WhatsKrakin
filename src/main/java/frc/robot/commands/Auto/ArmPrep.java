@@ -13,6 +13,7 @@ import frc.robot.subsystems.SuperStructure.SuperStructureConstants;
 public class ArmPrep extends Command {
   /** Creates a new ArmPrep. */
   private Timer timer = new Timer();
+
   public ArmPrep() {
     // Use addRequirements() here to declare subsystem dependencies.
   }

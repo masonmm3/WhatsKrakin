@@ -17,7 +17,6 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -26,17 +25,17 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.DriveCommands;
 import frc.robot.commands.Auto.ArmL4;
 import frc.robot.commands.Auto.ArmPrep;
+import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.SuperStructure.SuperStructure;
 import frc.robot.subsystems.SuperStructure.Arm.Arm;
 import frc.robot.subsystems.SuperStructure.Arm.ArmSim;
 import frc.robot.subsystems.SuperStructure.Arm.ArmTalonFx;
 import frc.robot.subsystems.SuperStructure.Extension.Extension;
 import frc.robot.subsystems.SuperStructure.Extension.ExtensionSim;
 import frc.robot.subsystems.SuperStructure.Extension.ExtensionTalonFx;
+import frc.robot.subsystems.SuperStructure.SuperStructure;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -48,7 +47,6 @@ import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.IO;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -61,11 +59,12 @@ public class RobotContainer {
   // Subsystems
   @SuppressWarnings("unused")
   private final Vision vision;
+
   private final Drive drive;
 
-  public static IO io;
-  private Extension extension;
-  private Arm arm;
+  public static IO io = new IO();
+  public static Extension extension;
+  public static Arm arm;
   public static SuperStructure superStructure;
 
   // Controller
@@ -76,7 +75,7 @@ public class RobotContainer {
 
   private Command ArmL4 = new ArmL4();
   private Command ArmPrep = new ArmPrep();
-  //TODO make collection command
+  // TODO make collection command
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {

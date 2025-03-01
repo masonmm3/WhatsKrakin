@@ -9,19 +9,17 @@ import org.littletonrobotics.junction.Logger;
 /** Add your docs here. */
 public class Extension {
   private ExtensionIO io;
-  private ExtensionIOInputsAutoLogged inputs;
+  private ExtensionIOInputsAutoLogged inputs = new ExtensionIOInputsAutoLogged();
   private double inch;
 
   public Extension(ExtensionIO io) {
     this.io = io;
   }
 
-  /**
-  * updates extension values periodically
-  */
+  /** updates extension values periodically */
   public void extensionPeriodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("Arm/Pivot", inputs);
+    Logger.processInputs("Arm/Extension", inputs);
   }
 
   public void extendToDistance(double inch) {

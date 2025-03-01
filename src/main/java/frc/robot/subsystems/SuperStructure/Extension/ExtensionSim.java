@@ -11,32 +11,48 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import frc.robot.subsystems.SuperStructure.SuperStructureConstants;
 
-
 /** Add your docs here. */
-public class ExtensionSim implements ExtensionIO{
-    public ElevatorSim extension;
-    public PIDController controller;
+public class ExtensionSim implements ExtensionIO {
+  public ElevatorSim extension;
+  public PIDController controller;
 
-    public ExtensionSim() {
-        double[] stdDevs = new double[2];
-        stdDevs[0] = 0;
-        stdDevs[1] = 0;
-        extension = new ElevatorSim(DCMotor.getKrakenX60(1), SuperStructureConstants.ExtensionGearRatio, 5, Units.inchesToMeters(4), 0, 4, true, 0, stdDevs);
+  public ExtensionSim() {
+    double[] stdDevs = new double[2];
+    stdDevs[0] = 0.004;
+    stdDevs[1] = 0.004;
+    extension =
+        new ElevatorSim(
+            DCMotor.getKrakenX60(1),
+            20,
+            5,
+            Units.inchesToMeters(4),
+            0,
+            4,
+            false,
+            0,
+            stdDevs);
 
-        controller = new PIDController(1, 0, 0);
-    }
+    controller = new PIDController(5, 0, 0);
+  }
 
-    @Override
-    public void extendToDistance(double inch) {
-        double volts = MathUtil.clamp(controller.calculate(getExtend(), inch), -12, 12);
-        extension.setInputVoltage(volts);
-    }
+  @Override
+  public void extendToDistance(double inch) {
+    double volts = MathUtil.clamp(controller.calculate(getExtend(), inch), -12, 12);
+    extension.setInputVoltage(volts);
+  }
 
-    @Override
-    public double getExtend() {
-        return Units.metersToInches(extension.getPositionMeters()); //should be the distance because CTRE Mechanisms good like that
-    }
+  @Override
+  public double getExtend() {
+    return Units.metersToInches(
+        extension
+            .getPositionMeters()); // should be the distance because CTRE Mechanisms good like that
+  }
 
-    //TODO zero using absolute encoder
-    //TODO add input loggging
+  // TODO zero using absolute encoder
+  // TODO add input loggging
+  @Override
+  public void updateInputs(ExtensionIOInputs inputs) {
+    extension.update(0.02);
+    inputs.extend = getExtend();
+  }
 }

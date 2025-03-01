@@ -4,23 +4,20 @@
 
 package frc.robot.subsystems.SuperStructure.Arm;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.math.geometry.Rotation2d;
+import org.littletonrobotics.junction.Logger;
 
 /** Add your docs here. */
 public class Arm {
   private ArmIO io;
-  private ArmIOInputsAutoLogged inputs;
+  private ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();
   private double Angle;
 
   public Arm(ArmIO io) {
     this.io = io;
   }
 
-  /**
-  * updates arm values periodically
-  */
+  /** updates arm values periodically */
   public void armPeriodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Arm/Pivot", inputs);

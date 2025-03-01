@@ -14,35 +14,48 @@ import frc.robot.subsystems.SuperStructure.SuperStructureConstants;
 
 /** Add your docs here. */
 public class ArmSim implements ArmIO {
-    private PIDController pid;
-    private SingleJointedArmSim arm;
+  private PIDController pid;
+  private SingleJointedArmSim arm;
 
-    public ArmSim() {
-        arm = new SingleJointedArmSim(DCMotor.getKrakenX60(1), SuperStructureConstants.angleGearRatio, 0.004, Units.inchesToMeters(5), 0, 0, true, 0, 0.04);
-        pid = new PIDController(1, 0, 0);
+  public ArmSim() {
+    arm =
+        new SingleJointedArmSim(
+            DCMotor.getKrakenX60(1),
+            50,
+            SingleJointedArmSim.estimateMOI(Units.inchesToMeters(8), 5),
+            Units.inchesToMeters(8),
+            Units.degreesToRadians(-90),
+            Units.degreesToRadians(270),
+            false,
+            0);
+    pid = new PIDController(1, 0, 0.01);
+  }
+
+  @Override
+  public void setAngle(double angle) {
+    double goTo;
+    if ((angle * 360 < SuperStructureConstants.PrepAngle
+            && Units.radiansToDegrees(arm.getAngleRads()) > SuperStructureConstants.PrepAngle + 2)
+        || (angle * 360 > SuperStructureConstants.PrepAngle
+            && Units.radiansToDegrees(arm.getAngleRads())
+                < SuperStructureConstants.PrepAngle
+                    - 2)) { // protect against rotating the short way
+      goTo = SuperStructureConstants.PrepAngle;
+    } else {
+      goTo = angle * 360;
     }
+    double volts = MathUtil.clamp(pid.calculate(getAngle().getDegrees(), goTo), -12, 12);
+    arm.setInputVoltage(volts);
+  }
 
-    @Override
-    public void setAngle(double angle) {
-        double goTo;
-        if ((angle < SuperStructureConstants.PrepAngle && Units.radiansToDegrees(arm.getAngleRads()) > SuperStructureConstants.PrepAngle - 2) || (angle > SuperStructureConstants.PrepAngle && Units.radiansToDegrees(arm.getAngleRads()) < SuperStructureConstants.PrepAngle + 2)) { //protect against rotating the short way
-            goTo = SuperStructureConstants.PrepAngle;
-        } else {
-            goTo = angle;
-        }
-        double volts = MathUtil.clamp(pid.calculate(getAngle().getDegrees(), goTo), -12, 12);
-        arm.setInputVoltage(volts);
+  @Override
+  public Rotation2d getAngle() {
+    return new Rotation2d(arm.getAngleRads());
+  }
 
-    }
-
-    @Override
-    public Rotation2d getAngle() {
-        return new Rotation2d(arm.getAngleRads());
-    }
-
-    @Override
-    public void updateInputs(ArmIOInputs inputs) {
-        arm.update(0.02);
-        inputs.angle = getAngle().getDegrees();
-    }
+  @Override
+  public void updateInputs(ArmIOInputs inputs) {
+    arm.update(0.02);
+    inputs.angle = getAngle().getDegrees();
+  }
 }

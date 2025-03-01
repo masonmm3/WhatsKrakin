@@ -10,13 +10,14 @@ import org.littletonrobotics.junction.AutoLog;
 public interface ExtensionIO {
 
   @AutoLog
-  public static class ExtensionIOInputs {}
+  public static class ExtensionIOInputs {
+    public double extend = 0;
+  }
 
   public default void updateInputs(ExtensionIOInputs inputs) {}
 
   /**
-   * @param inch
-   * extends to distance in inches from start
+   * @param inch extends to distance in inches from start
    */
   public default void extendToDistance(double inch) {}
 

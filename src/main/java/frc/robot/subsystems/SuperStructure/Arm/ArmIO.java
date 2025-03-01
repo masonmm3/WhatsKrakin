@@ -4,9 +4,8 @@
 
 package frc.robot.subsystems.SuperStructure.Arm;
 
-import org.littletonrobotics.junction.AutoLog;
-
 import edu.wpi.first.math.geometry.Rotation2d;
+import org.littletonrobotics.junction.AutoLog;
 
 /** Add your docs here. */
 public interface ArmIO {
@@ -17,19 +16,17 @@ public interface ArmIO {
 
   public default void updateInputs(ArmIOInputs inputs) {}
 
-
   /**
-   * @param angle
-   * go to angle in rotations
+   * @param angle go to angle in rotations
    */
   public default void setAngle(double angle) {}
 
   /**
    * gives current angle of actual arm
+   *
    * @return rotation2d
    */
   public default Rotation2d getAngle() {
     return new Rotation2d();
   }
-
 }

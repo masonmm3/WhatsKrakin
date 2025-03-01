@@ -13,6 +13,7 @@ import frc.robot.subsystems.SuperStructure.SuperStructureConstants;
 public class ArmL4 extends Command {
   /** Creates a new ArmL4. */
   private Timer timer = new Timer();
+
   private boolean scored;
   private boolean finished;
 
@@ -33,13 +34,14 @@ public class ArmL4 extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (timer.get() < 0.5) 
-    {
+    if (timer.get() < 0.5) {
       RobotContainer.superStructure.setArm(SuperStructureConstants.L4Angle);
       RobotContainer.superStructure.setExtension(SuperStructureConstants.L4Extend);
-    } else if (RobotContainer.superStructure.atSetpoint() && !scored){
-      RobotContainer.superStructure.setArm(SuperStructureConstants.L4Angle-SuperStructureConstants.scoreAngleDrop);
-      RobotContainer.superStructure.setExtension(SuperStructureConstants.L4Extend-SuperStructureConstants.scoreExtendDrop);
+    } else if (RobotContainer.superStructure.atSetpoint() && !scored) {
+      RobotContainer.superStructure.setArm(
+          SuperStructureConstants.L4Angle - SuperStructureConstants.scoreAngleDrop);
+      RobotContainer.superStructure.setExtension(
+          SuperStructureConstants.L4Extend - SuperStructureConstants.scoreExtendDrop);
       scored = true;
     } else if (RobotContainer.superStructure.atSetpoint() && scored) {
       RobotContainer.superStructure.setArm(SuperStructureConstants.HomeAngle);
