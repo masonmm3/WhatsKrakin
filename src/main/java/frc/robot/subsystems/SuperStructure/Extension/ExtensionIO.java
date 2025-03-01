@@ -6,8 +6,6 @@ package frc.robot.subsystems.SuperStructure.Extension;
 
 import org.littletonrobotics.junction.AutoLog;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-
 /** Add your docs here. */
 public interface ExtensionIO {
 

@@ -20,7 +20,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.SuperStructure.SuperStructureConstants;
 
 /** Add your docs here. */
 public class ArmTalonFx implements ArmIO {
@@ -31,8 +31,8 @@ public class ArmTalonFx implements ArmIO {
     private static StatusSignal<AngularVelocity> _armVelocity;
 
     public ArmTalonFx() {
-        _angleMotorK = new TalonFX(0);
-        _armEncoder = new CANcoder(0);
+        _angleMotorK = new TalonFX(SuperStructureConstants.ArmId);
+        _armEncoder = new CANcoder(SuperStructureConstants.ArmEncoderId);
 
         var _armConfig = new TalonFXConfiguration();
         //current limits and ramp rates
@@ -43,25 +43,25 @@ public class ArmTalonFx implements ArmIO {
         _armConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.1;
         _armConfig.ClosedLoopRamps.TorqueClosedLoopRampPeriod = 0.1;
         //Closed loop settings
-        _armConfig.ClosedLoopGeneral.ContinuousWrap = false;
+        _armConfig.ClosedLoopGeneral.ContinuousWrap = true;
         _armConfig.Feedback.FeedbackRemoteSensorID = _armEncoder.getDeviceID();
         _armConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.SyncCANcoder;
-        _armConfig.Feedback.RotorToSensorRatio = 84/12;
+        _armConfig.Feedback.RotorToSensorRatio = SuperStructureConstants.angleGearRatio;
         _armConfig.Feedback.SensorToMechanismRatio = 1;
         _armConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
         //GPID and VAS
-        _armConfig.Slot0.kP = 0;
-        _armConfig.Slot0.kI = 0;
-        _armConfig.Slot0.kD = 0;
-        _armConfig.Slot0.kG = 0;
-        _armConfig.Slot0.kV = 0;
-        _armConfig.Slot0.kS = 0;
-        _armConfig.Slot0.kA = 0;
+        _armConfig.Slot0.kP = SuperStructureConstants.AngleP;
+        _armConfig.Slot0.kI = SuperStructureConstants.AngleI;
+        _armConfig.Slot0.kD = SuperStructureConstants.AngleD;
+        _armConfig.Slot0.kG = SuperStructureConstants.AngleG;
+        _armConfig.Slot0.kV = SuperStructureConstants.AngleV;
+        _armConfig.Slot0.kS = SuperStructureConstants.AngleS;
+        _armConfig.Slot0.kA = SuperStructureConstants.AngleA;
         //software limits
         _armConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        _armConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0;
+        _armConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = SuperStructureConstants.angleSoftLimitHigh;
         _armConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        _armConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
+        _armConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = SuperStructureConstants.angleSoftLimitLow;
         //voltage limits
         _armConfig.Voltage.PeakForwardVoltage = 12;
         _armConfig.Voltage.PeakReverseVoltage = -12;
@@ -79,7 +79,13 @@ public class ArmTalonFx implements ArmIO {
 
     @Override
     public void setAngle(double angle) {
-        _angleMotorK.setControl(new PositionVoltage(angle).withSlot(0));
+        double goTo;
+        if ((angle < SuperStructureConstants.PrepAngle && _absolutePosition.getValueAsDouble() > SuperStructureConstants.PrepAngle - 2) || (angle > SuperStructureConstants.PrepAngle && _absolutePosition.getValueAsDouble() < SuperStructureConstants.PrepAngle + 2)) { //protect against rotating the short way
+            goTo = SuperStructureConstants.PrepAngle;
+        } else {
+            goTo = angle;
+        }
+        _angleMotorK.setControl(new PositionVoltage(goTo).withSlot(0));
     }
 
     @Override
@@ -87,5 +93,5 @@ public class ArmTalonFx implements ArmIO {
         return new Rotation2d(Units.radiansToRotations(_armEncoder.getAbsolutePosition().getValueAsDouble()));
     }
 
-    //TODO make arm not murder itself by taking shortest path.... Maybe. might just do it in code
+    //TODO add Input logging
 }

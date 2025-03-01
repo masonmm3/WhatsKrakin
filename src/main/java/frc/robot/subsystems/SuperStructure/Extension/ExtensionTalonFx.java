@@ -18,6 +18,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import frc.robot.subsystems.SuperStructure.SuperStructureConstants;
 
 /** Add your docs here. */
 public class ExtensionTalonFx implements ExtensionIO {
@@ -28,8 +29,8 @@ public class ExtensionTalonFx implements ExtensionIO {
     private static StatusSignal<AngularVelocity> _extendVelocity;
 
     public ExtensionTalonFx() {
-        _extendMotorK = new TalonFX(0);
-        _extendEncoder = new CANcoder(0);
+        _extendMotorK = new TalonFX(SuperStructureConstants.ExtensionId);
+        _extendEncoder = new CANcoder(SuperStructureConstants.ExtensionEncoderID);
 
         var _extendConfig = new TalonFXConfiguration();
         //current limits and ramp rates
@@ -49,18 +50,18 @@ public class ExtensionTalonFx implements ExtensionIO {
         _extendConfig.Feedback.RotorToSensorRatio = extendInchToRotations;
         _extendConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
         //GPID and VAS
-        _extendConfig.Slot0.kP = 0;
-        _extendConfig.Slot0.kI = 0;
-        _extendConfig.Slot0.kD = 0;
-        _extendConfig.Slot0.kG = 0;
-        _extendConfig.Slot0.kV = 0;
-        _extendConfig.Slot0.kS = 0;
-        _extendConfig.Slot0.kA = 0;
+        _extendConfig.Slot0.kP = SuperStructureConstants.ExtensionP;
+        _extendConfig.Slot0.kI = SuperStructureConstants.ExtensionI;
+        _extendConfig.Slot0.kD = SuperStructureConstants.ExtensionD;
+        _extendConfig.Slot0.kG = SuperStructureConstants.ExtensionG;
+        _extendConfig.Slot0.kV = SuperStructureConstants.ExtensionV;
+        _extendConfig.Slot0.kS = SuperStructureConstants.ExtensionS;
+        _extendConfig.Slot0.kA = SuperStructureConstants.ExtensionA;
         //software limits
         _extendConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        _extendConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0;
+        _extendConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = SuperStructureConstants.ExtensionSoftLimitHigh;
         _extendConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        _extendConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
+        _extendConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = SuperStructureConstants.ExtensionSoftLimitLow;
         //voltage limits
         _extendConfig.Voltage.PeakForwardVoltage = 12;
         _extendConfig.Voltage.PeakReverseVoltage = -12;
@@ -85,4 +86,7 @@ public class ExtensionTalonFx implements ExtensionIO {
     public double getExtend() {
         return _extendMotorK.getPosition().getValueAsDouble(); //should be the distance because CTRE Mechanisms good like that
     }
+
+    //TODO zero using absolute encoder
+    //TODO add input loggging
 }
