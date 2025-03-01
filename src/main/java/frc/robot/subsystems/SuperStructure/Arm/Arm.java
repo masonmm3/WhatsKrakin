@@ -26,6 +26,6 @@ public class Arm {
   }
 
   public void setPosition(Rotation2d Angle) {
-    io.setAngle(Angle);
+    io.setAngle(Angle.getRotations());
   }
 }

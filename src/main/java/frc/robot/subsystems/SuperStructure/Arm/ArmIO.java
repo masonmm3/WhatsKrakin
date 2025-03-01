@@ -13,5 +13,10 @@ public interface ArmIO {
 
   public default void updateInputs(ArmIOInputs inputs) {}
 
+
+  /**
+   * @param angle
+   * go to angle in rotations
+   */
   public default void setAngle(double angle) {}
 }

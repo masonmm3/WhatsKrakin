@@ -13,4 +13,10 @@ public interface ExtensionIO {
   public static class ExtensionIOInputs {}
 
   public default void updateInputs(ExtensionIOInputs inputs) {}
+
+  /**
+   * @param inch
+   * extends to distance in inches from start
+   */
+  public default void extendToDistance(double inch) {}
 }

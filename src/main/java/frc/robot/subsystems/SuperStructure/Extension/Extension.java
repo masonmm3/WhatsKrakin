@@ -22,4 +22,8 @@ public class Extension {
     io.updateInputs(inputs);
     Logger.processInputs("Arm/Pivot", inputs);
   }
+
+  public void extendToDistance(double inch) {
+    io.extendToDistance(inch);
+  }
 }

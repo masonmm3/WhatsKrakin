@@ -44,7 +44,7 @@ public class ArmTalonFx implements ArmIO {
         _armConfig.ClosedLoopGeneral.ContinuousWrap = false;
         _armConfig.Feedback.FeedbackRemoteSensorID = _armEncoder.getDeviceID();
         _armConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.SyncCANcoder;
-        _armConfig.Feedback.RotorToSensorRatio = 80/12;
+        _armConfig.Feedback.RotorToSensorRatio = 84/12;
         _armConfig.Feedback.SensorToMechanismRatio = 1;
         _armConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
         //GPID and VAS
@@ -79,4 +79,6 @@ public class ArmTalonFx implements ArmIO {
     public void setAngle(double angle) {
         _angleMotorK.setControl(new PositionVoltage(angle).withSlot(0));
     }
+
+    //TODO make arm not murder itself by taking shortest path
 }
