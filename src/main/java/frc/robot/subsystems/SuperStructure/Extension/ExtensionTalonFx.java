@@ -9,7 +9,6 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -28,8 +27,8 @@ public class ExtensionTalonFx implements ExtensionIO {
   public static StatusSignal<AngularVelocity> _extendVelocity;
 
   public ExtensionTalonFx() {
-    _extendMotorK = new TalonFX(SuperStructureConstants.ExtensionId);
-    _extendEncoder = new CANcoder(SuperStructureConstants.ExtensionEncoderID);
+    _extendMotorK = new TalonFX(SuperStructureConstants.ExtensionId, "rio");
+    _extendEncoder = new CANcoder(SuperStructureConstants.ExtensionEncoderID, "rio");
 
     var _extendConfig = new TalonFXConfiguration();
     // current limits and ramp rates
@@ -42,7 +41,9 @@ public class ExtensionTalonFx implements ExtensionIO {
     // Closed loop settings
     _extendConfig.ClosedLoopGeneral.ContinuousWrap = false;
     _extendConfig.Feedback.FeedbackRemoteSensorID = _extendEncoder.getDeviceID();
-    _extendConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+    _extendConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+    _extendConfig.Feedback.RotorToSensorRatio = SuperStructureConstants.ExtensionGearRatio;
+    _extendConfig.Feedback.SensorToMechanismRatio = 1;
 
     double extendInchToRotations =
         80 / 12; // Find circumference and multiply by ratio. Idea (2 rotation = 10 inch, 6.6 Motor
@@ -74,8 +75,8 @@ public class ExtensionTalonFx implements ExtensionIO {
     _absolutePosition = _extendEncoder.getAbsolutePosition();
     _extendVelocity = _extendEncoder.getVelocity();
 
-    BaseStatusSignal.setUpdateFrequencyForAll(100, _absolutePosition, _extendVelocity);
-    ParentDevice.optimizeBusUtilizationForAll(_extendMotorK);
+    BaseStatusSignal.setUpdateFrequencyForAll(50, _absolutePosition, _extendVelocity);
+    // ParentDevice.optimizeBusUtilizationForAll(_extendMotorK);
   }
 
   @Override

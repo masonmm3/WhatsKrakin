@@ -9,7 +9,6 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -30,8 +29,8 @@ public class ArmTalonFx implements ArmIO {
   public static StatusSignal<AngularVelocity> _armVelocity;
 
   public ArmTalonFx() {
-    _angleMotorK = new TalonFX(SuperStructureConstants.ArmId);
-    _armEncoder = new CANcoder(SuperStructureConstants.ArmEncoderId);
+    _angleMotorK = new TalonFX(SuperStructureConstants.ArmId, "rio");
+    _armEncoder = new CANcoder(SuperStructureConstants.ArmEncoderId, "rio");
 
     var _armConfig = new TalonFXConfiguration();
     // current limits and ramp rates
@@ -44,7 +43,7 @@ public class ArmTalonFx implements ArmIO {
     // Closed loop settings
     _armConfig.ClosedLoopGeneral.ContinuousWrap = true;
     _armConfig.Feedback.FeedbackRemoteSensorID = _armEncoder.getDeviceID();
-    _armConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.SyncCANcoder;
+    _armConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     _armConfig.Feedback.RotorToSensorRatio = SuperStructureConstants.angleGearRatio;
     _armConfig.Feedback.SensorToMechanismRatio = 1;
     _armConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
@@ -72,8 +71,8 @@ public class ArmTalonFx implements ArmIO {
     _absolutePosition = _armEncoder.getAbsolutePosition();
     _armVelocity = _armEncoder.getVelocity();
 
-    BaseStatusSignal.setUpdateFrequencyForAll(100, _absolutePosition, _armVelocity);
-    ParentDevice.optimizeBusUtilizationForAll(_angleMotorK);
+    BaseStatusSignal.setUpdateFrequencyForAll(50, _absolutePosition, _armVelocity);
+    // ParentDevice.optimizeBusUtilizationForAll(_angleMotorK);
   }
 
   @Override
