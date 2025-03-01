@@ -19,9 +19,9 @@ public final class SuperStructureConstants {
   public static double L2Extend = 0;
   public static double L1Extend = 0;
 
-  public static double L4Angle = 0;
-  public static double L3Angle = 0;
-  public static double L2Angle = 0;
+  public static double L4Angle = 60;
+  public static double L3Angle = 40;
+  public static double L2Angle = 20;
   public static double L1Angle = 0;
 
   public static double PrepAngle = 90; // should be straight up. (NEEDS TO BE STRAIGHT UP)
