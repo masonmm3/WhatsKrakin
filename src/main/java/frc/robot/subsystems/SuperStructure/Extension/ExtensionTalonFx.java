@@ -80,4 +80,9 @@ public class ExtensionTalonFx implements ExtensionIO {
     public void extendToDistance(double inch) {
         _extendMotorK.setControl(new PositionVoltage(inch).withSlot(0));
     }
+
+    @Override
+    public double getExtend() {
+        return _extendMotorK.getPosition().getValueAsDouble(); //should be the distance because CTRE Mechanisms good like that
+    }
 }

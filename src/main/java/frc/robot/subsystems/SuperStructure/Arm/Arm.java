@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 public class Arm {
   private ArmIO io;
   private ArmIOInputsAutoLogged inputs;
+  private double Angle;
 
   public Arm(ArmIO io) {
     this.io = io;
@@ -27,5 +28,14 @@ public class Arm {
 
   public void setPosition(Rotation2d Angle) {
     io.setAngle(Angle.getRotations());
+    this.Angle = Angle.getDegrees();
+  }
+
+  public boolean atTarget() {
+    if (Angle < (io.getAngle().getDegrees() + 1) && Angle > io.getAngle().getDegrees() - 1) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

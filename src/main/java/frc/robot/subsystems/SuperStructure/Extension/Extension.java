@@ -10,6 +10,7 @@ import org.littletonrobotics.junction.Logger;
 public class Extension {
   private ExtensionIO io;
   private ExtensionIOInputsAutoLogged inputs;
+  private double inch;
 
   public Extension(ExtensionIO io) {
     this.io = io;
@@ -25,5 +26,14 @@ public class Extension {
 
   public void extendToDistance(double inch) {
     io.extendToDistance(inch);
+    this.inch = inch;
+  }
+
+  public boolean atExtension() {
+    if (inch < (io.getExtend() + 0.5) && inch > io.getExtend() - 0.5) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

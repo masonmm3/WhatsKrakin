@@ -6,6 +6,8 @@ package frc.robot.subsystems.SuperStructure.Extension;
 
 import org.littletonrobotics.junction.AutoLog;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+
 /** Add your docs here. */
 public interface ExtensionIO {
 
@@ -19,4 +21,8 @@ public interface ExtensionIO {
    * extends to distance in inches from start
    */
   public default void extendToDistance(double inch) {}
+
+  public default double getExtend() {
+    return 0;
+  }
 }
