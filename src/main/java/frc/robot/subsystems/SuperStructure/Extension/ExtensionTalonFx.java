@@ -9,6 +9,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -27,8 +28,8 @@ public class ExtensionTalonFx implements ExtensionIO {
   public static StatusSignal<AngularVelocity> _extendVelocity;
 
   public ExtensionTalonFx() {
-    _extendMotorK = new TalonFX(SuperStructureConstants.ExtensionId, "rio");
-    _extendEncoder = new CANcoder(SuperStructureConstants.ExtensionEncoderID, "rio");
+    _extendMotorK = new TalonFX(SuperStructureConstants.ExtensionId);
+    _extendEncoder = new CANcoder(SuperStructureConstants.ExtensionEncoderID);
 
     var _extendConfig = new TalonFXConfiguration();
     // current limits and ramp rates
@@ -41,7 +42,8 @@ public class ExtensionTalonFx implements ExtensionIO {
     // Closed loop settings
     _extendConfig.ClosedLoopGeneral.ContinuousWrap = false;
     _extendConfig.Feedback.FeedbackRemoteSensorID = _extendEncoder.getDeviceID();
-    _extendConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+    _extendConfig.Feedback.FeedbackSensorSource =
+        FeedbackSensorSourceValue.FusedCANcoder; // Should be fused? or sync
     _extendConfig.Feedback.RotorToSensorRatio = SuperStructureConstants.ExtensionGearRatio;
     _extendConfig.Feedback.SensorToMechanismRatio = 1;
 
@@ -67,8 +69,8 @@ public class ExtensionTalonFx implements ExtensionIO {
     _extendConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
         SuperStructureConstants.ExtensionSoftLimitLow;
     // voltage limits
-    _extendConfig.Voltage.PeakForwardVoltage = 12;
-    _extendConfig.Voltage.PeakReverseVoltage = -12;
+    _extendConfig.Voltage.PeakForwardVoltage = 6; // put to 12 once we figure out everything
+    _extendConfig.Voltage.PeakReverseVoltage = -6; // put to 12 once we figure out everything
 
     _extendMotorK.getConfigurator().apply(_extendConfig);
 
@@ -76,7 +78,7 @@ public class ExtensionTalonFx implements ExtensionIO {
     _extendVelocity = _extendEncoder.getVelocity();
 
     BaseStatusSignal.setUpdateFrequencyForAll(50, _absolutePosition, _extendVelocity);
-    // ParentDevice.optimizeBusUtilizationForAll(_extendMotorK);
+    ParentDevice.optimizeBusUtilizationForAll(_extendMotorK);
   }
 
   @Override
@@ -92,8 +94,9 @@ public class ExtensionTalonFx implements ExtensionIO {
 
   @Override
   public void updateInputs(ExtensionIOInputs inputs) {
-    inputs.extend = getExtend();
     BaseStatusSignal.refreshAll(_absolutePosition);
+    BaseStatusSignal.refreshAll(_extendVelocity);
+    inputs.extend = getExtend();
   }
   // TODO zero using absolute encoder
   // TODO add input loggging

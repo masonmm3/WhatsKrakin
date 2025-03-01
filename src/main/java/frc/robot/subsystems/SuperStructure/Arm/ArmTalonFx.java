@@ -9,6 +9,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -29,8 +30,8 @@ public class ArmTalonFx implements ArmIO {
   public static StatusSignal<AngularVelocity> _armVelocity;
 
   public ArmTalonFx() {
-    _angleMotorK = new TalonFX(SuperStructureConstants.ArmId, "rio");
-    _armEncoder = new CANcoder(SuperStructureConstants.ArmEncoderId, "rio");
+    _angleMotorK = new TalonFX(SuperStructureConstants.ArmId);
+    _armEncoder = new CANcoder(SuperStructureConstants.ArmEncoderId);
 
     var _armConfig = new TalonFXConfiguration();
     // current limits and ramp rates
@@ -72,7 +73,7 @@ public class ArmTalonFx implements ArmIO {
     _armVelocity = _armEncoder.getVelocity();
 
     BaseStatusSignal.setUpdateFrequencyForAll(50, _absolutePosition, _armVelocity);
-    // ParentDevice.optimizeBusUtilizationForAll(_angleMotorK);
+    ParentDevice.optimizeBusUtilizationForAll(_angleMotorK);
   }
 
   @Override
@@ -99,8 +100,9 @@ public class ArmTalonFx implements ArmIO {
 
   @Override
   public void updateInputs(ArmIOInputs inputs) {
-    inputs.angle = getAngle().getDegrees();
     BaseStatusSignal.refreshAll(_absolutePosition);
+    BaseStatusSignal.refreshAll(_armVelocity);
+    inputs.angle = getAngle().getDegrees();
   }
   // TODO add Input logging
 }

@@ -9,12 +9,12 @@ import org.littletonrobotics.junction.AutoLog;
 
 /** Add your docs here. */
 public interface ArmIO {
-  @AutoLog //Auto logs inputs
+  @AutoLog // Auto logs inputs
   public static class ArmIOInputs {
-    public double angle = 0; //Gets the angle number as zero to start with
+    public double angle = 0; // Gets the angle number as zero to start with
   }
 
-  public default void updateInputs(ArmIOInputs inputs) {} //Updates inputs
+  public default void updateInputs(ArmIOInputs inputs) {} // Updates inputs
 
   /**
    * @param angle go to angle in rotations

@@ -8,20 +8,20 @@ package frc.robot.subsystems.SuperStructure;
 public final class SuperStructureConstants {
 
   // Constants
-  public static int ArmId = 1;
-  public static int ArmEncoderId = 1;
-  public static int ExtensionId = 0;
-  public static int ExtensionEncoderID = 5;
+  public static int ArmId = 20;
+  public static int ArmEncoderId = 22;
+  public static int ExtensionId = 21;
+  public static int ExtensionEncoderID = 23;
 
   // Setpoints PLEASE USE POSITIVE NUMBERS -90 = 270
-  public static double L4Extend = 5;
+  public static double L4Extend = 0;
   public static double L3Extend = 0;
   public static double L2Extend = 0;
   public static double L1Extend = 0;
 
-  public static double L4Angle = 60;
-  public static double L3Angle = 40;
-  public static double L2Angle = 20;
+  public static double L4Angle = 3;
+  public static double L3Angle = 2;
+  public static double L2Angle = 1;
   public static double L1Angle = 0;
 
   public static double PrepAngle = 90; // should be straight up. (NEEDS TO BE STRAIGHT UP)
@@ -40,16 +40,16 @@ public final class SuperStructureConstants {
   public static double HomeExtend = 0;
 
   // closed loop
-  public static double AngleP = 0;
+  public static double AngleP = 2;
   public static double AngleI = 0;
   public static double AngleD = 0;
   public static double AngleS = 0;
   public static double AngleV = 0.1;
   public static double AngleA = 0;
-  public static double AngleG = 0;
+  public static double AngleG = 0.2;
   public static double angleSoftLimitLow = 0;
   public static double angleSoftLimitHigh = 0;
-  public static double angleGearRatio = 80 / 12;
+  public static double angleGearRatio = 84 / 12;
 
   public static double ExtensionP = 0;
   public static double ExtensionI = 0;
@@ -60,5 +60,5 @@ public final class SuperStructureConstants {
   public static double ExtensionG = 0;
   public static double ExtensionSoftLimitLow = 0;
   public static double ExtensionSoftLimitHigh = 0;
-  public static double ExtensionGearRatio = 80 / 10;
+  public static double ExtensionGearRatio = 80 / 12;
 }

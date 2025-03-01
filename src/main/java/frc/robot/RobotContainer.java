@@ -62,7 +62,7 @@ public class RobotContainer {
 
   private final Drive drive;
 
-  public static IO io = new IO(); //creates a version of IO
+  public static IO io = new IO(); // creates a version of IO
   public static Extension extension;
   public static Arm arm;
   public static SuperStructure superStructure;
