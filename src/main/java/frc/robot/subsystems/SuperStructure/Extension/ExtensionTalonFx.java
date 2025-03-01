@@ -45,7 +45,7 @@ public class ExtensionTalonFx implements ExtensionIO {
         _extendConfig.Feedback.FeedbackRemoteSensorID = _extendEncoder.getDeviceID();
         _extendConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
 
-        double extendInchToRotations = (2 * Math.PI * 4) * 80/12; // Find circumference and multiply by ratio. Idea (2 rotation = 10 inch, 6.6 Motor rotations = 1 rotation so 13.2 rotations = 10 inch)
+        double extendInchToRotations = 80/12; // Find circumference and multiply by ratio. Idea (2 rotation = 10 inch, 6.6 Motor rotations = 1 rotation so 13.2 rotations = 10 inch)
 
         _extendConfig.Feedback.RotorToSensorRatio = extendInchToRotations;
         _extendConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
@@ -79,12 +79,13 @@ public class ExtensionTalonFx implements ExtensionIO {
 
     @Override
     public void extendToDistance(double inch) {
-        _extendMotorK.setControl(new PositionVoltage(inch).withSlot(0));
+        double target = inch / (2 * Math.PI * 4);
+        _extendMotorK.setControl(new PositionVoltage(target).withSlot(0));
     }
 
     @Override
     public double getExtend() {
-        return _extendMotorK.getPosition().getValueAsDouble(); //should be the distance because CTRE Mechanisms good like that
+        return _extendMotorK.getPosition().getValueAsDouble() *  (2 * Math.PI * 4);
     }
 
     //TODO zero using absolute encoder

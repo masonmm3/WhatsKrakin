@@ -11,7 +11,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 /** Add your docs here. */
 public interface ArmIO {
   @AutoLog
-  public static class ArmIOInputs {}
+  public static class ArmIOInputs {
+    public double angle = 0;
+  }
 
   public default void updateInputs(ArmIOInputs inputs) {}
 
@@ -29,4 +31,5 @@ public interface ArmIO {
   public default Rotation2d getAngle() {
     return new Rotation2d();
   }
+
 }

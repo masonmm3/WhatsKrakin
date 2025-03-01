@@ -80,7 +80,7 @@ public class ArmTalonFx implements ArmIO {
     @Override
     public void setAngle(double angle) {
         double goTo;
-        if ((angle < SuperStructureConstants.PrepAngle && _absolutePosition.getValueAsDouble() > SuperStructureConstants.PrepAngle - 2) || (angle > SuperStructureConstants.PrepAngle && _absolutePosition.getValueAsDouble() < SuperStructureConstants.PrepAngle + 2)) { //protect against rotating the short way
+        if ((angle < SuperStructureConstants.PrepAngle && _absolutePosition.getValueAsDouble()*360 > SuperStructureConstants.PrepAngle - 2) || (angle > SuperStructureConstants.PrepAngle*360 && _absolutePosition.getValueAsDouble() < SuperStructureConstants.PrepAngle + 2)) { //protect against rotating the short way
             goTo = SuperStructureConstants.PrepAngle;
         } else {
             goTo = angle;
@@ -90,7 +90,7 @@ public class ArmTalonFx implements ArmIO {
 
     @Override
     public Rotation2d getAngle() {
-        return new Rotation2d(Units.radiansToRotations(_armEncoder.getAbsolutePosition().getValueAsDouble()));
+        return new Rotation2d(Units.rotationsToRadians(_armEncoder.getAbsolutePosition().getValueAsDouble()));
     }
 
     //TODO add Input logging

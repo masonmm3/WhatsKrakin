@@ -32,8 +32,10 @@ import frc.robot.commands.Auto.ArmPrep;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.SuperStructure.SuperStructure;
 import frc.robot.subsystems.SuperStructure.Arm.Arm;
+import frc.robot.subsystems.SuperStructure.Arm.ArmSim;
 import frc.robot.subsystems.SuperStructure.Arm.ArmTalonFx;
 import frc.robot.subsystems.SuperStructure.Extension.Extension;
+import frc.robot.subsystems.SuperStructure.Extension.ExtensionSim;
 import frc.robot.subsystems.SuperStructure.Extension.ExtensionTalonFx;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -122,7 +124,9 @@ public class RobotContainer {
                 // new VisionIOPhotonVisionSim(camera2Name, robotToCamera2, drive::getPose),
                 // new VisionIOPhotonVisionSim(camera3Name, robotToCamera3, drive::getPose)
                 );
-        superStructure = new SuperStructure(null, null);
+        arm = new Arm(new ArmSim());
+        extension = new Extension(new ExtensionSim());
+        superStructure = new SuperStructure(arm, extension);
         break;
 
       default:
