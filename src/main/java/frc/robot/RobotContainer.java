@@ -62,13 +62,14 @@ public class RobotContainer {
 
   private final Drive drive;
 
-  public static IO io = new IO();
+  public static IO io = new IO(); //creates a version of IO
   public static Extension extension;
   public static Arm arm;
   public static SuperStructure superStructure;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
+  //   private final CommandXboxController operator = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;

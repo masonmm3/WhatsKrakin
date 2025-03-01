@@ -4,11 +4,11 @@
 
 package frc.robot.subsystems.SuperStructure.Extension;
 
+import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -20,11 +20,11 @@ import frc.robot.subsystems.SuperStructure.SuperStructureConstants;
 
 /** Add your docs here. */
 public class ExtensionTalonFx implements ExtensionIO {
-  private TalonFX _extendMotorK;
-  private CANcoder _extendEncoder;
+  public TalonFX _extendMotorK;
+  public CANcoder _extendEncoder;
 
-  private static StatusSignal<Angle> _absolutePosition;
-  private static StatusSignal<AngularVelocity> _extendVelocity;
+  public static StatusSignal<Angle> _absolutePosition;
+  public static StatusSignal<AngularVelocity> _extendVelocity;
 
   public ExtensionTalonFx() {
     _extendMotorK = new TalonFX(SuperStructureConstants.ExtensionId, "rio");
@@ -75,8 +75,8 @@ public class ExtensionTalonFx implements ExtensionIO {
     _absolutePosition = _extendEncoder.getAbsolutePosition();
     _extendVelocity = _extendEncoder.getVelocity();
 
-    // BaseStatusSignal.setUpdateFrequencyForAll(50, _absolutePosition, _extendVelocity);
-    ParentDevice.optimizeBusUtilizationForAll(_extendMotorK);
+    BaseStatusSignal.setUpdateFrequencyForAll(50, _absolutePosition, _extendVelocity);
+    // ParentDevice.optimizeBusUtilizationForAll(_extendMotorK);
   }
 
   @Override
@@ -93,6 +93,7 @@ public class ExtensionTalonFx implements ExtensionIO {
   @Override
   public void updateInputs(ExtensionIOInputs inputs) {
     inputs.extend = getExtend();
+    BaseStatusSignal.refreshAll(_absolutePosition);
   }
   // TODO zero using absolute encoder
   // TODO add input loggging
