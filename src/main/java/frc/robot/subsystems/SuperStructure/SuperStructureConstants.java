@@ -7,11 +7,11 @@ package frc.robot.subsystems.SuperStructure;
 /** Add your docs here. */
 public final class SuperStructureConstants {
 
-  // TODO setup Constants
-  public static int ArmId = 0;
-  public static int ArmEncoderId = 0;
+  // Constants
+  public static int ArmId = 1;
+  public static int ArmEncoderId = 1;
   public static int ExtensionId = 0;
-  public static int ExtensionEncoderID = 0;
+  public static int ExtensionEncoderID = 5;
 
   // Setpoints PLEASE USE POSITIVE NUMBERS -90 = 270
   public static double L4Extend = 5;
@@ -44,7 +44,7 @@ public final class SuperStructureConstants {
   public static double AngleI = 0;
   public static double AngleD = 0;
   public static double AngleS = 0;
-  public static double AngleV = 0;
+  public static double AngleV = 0.1;
   public static double AngleA = 0;
   public static double AngleG = 0;
   public static double angleSoftLimitLow = 0;

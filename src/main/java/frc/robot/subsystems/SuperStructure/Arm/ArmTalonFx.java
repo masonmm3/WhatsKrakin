@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems.SuperStructure.Arm;
 
-import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -30,8 +29,8 @@ public class ArmTalonFx implements ArmIO {
   private static StatusSignal<AngularVelocity> _armVelocity;
 
   public ArmTalonFx() {
-    _angleMotorK = new TalonFX(SuperStructureConstants.ArmId);
-    _armEncoder = new CANcoder(SuperStructureConstants.ArmEncoderId);
+    _angleMotorK = new TalonFX(SuperStructureConstants.ArmId, "rio");
+    _armEncoder = new CANcoder(SuperStructureConstants.ArmEncoderId, "rio");
 
     var _armConfig = new TalonFXConfiguration();
     // current limits and ramp rates
@@ -44,7 +43,7 @@ public class ArmTalonFx implements ArmIO {
     // Closed loop settings
     _armConfig.ClosedLoopGeneral.ContinuousWrap = true;
     _armConfig.Feedback.FeedbackRemoteSensorID = _armEncoder.getDeviceID();
-    _armConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.SyncCANcoder;
+    _armConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     _armConfig.Feedback.RotorToSensorRatio = SuperStructureConstants.angleGearRatio;
     _armConfig.Feedback.SensorToMechanismRatio = 1;
     _armConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
@@ -72,7 +71,7 @@ public class ArmTalonFx implements ArmIO {
     _absolutePosition = _armEncoder.getAbsolutePosition();
     _armVelocity = _armEncoder.getVelocity();
 
-    BaseStatusSignal.setUpdateFrequencyForAll(100, _absolutePosition, _armVelocity);
+    // BaseStatusSignal.setUpdateFrequencyForAll(50, _absolutePosition, _armVelocity);
     ParentDevice.optimizeBusUtilizationForAll(_angleMotorK);
   }
 
@@ -81,7 +80,7 @@ public class ArmTalonFx implements ArmIO {
     double goTo;
     if ((angle * 360 < SuperStructureConstants.PrepAngle
             && _absolutePosition.getValueAsDouble() * 360 > SuperStructureConstants.PrepAngle + 2)
-        || (angle * 360 > SuperStructureConstants.PrepAngle 
+        || (angle * 360 > SuperStructureConstants.PrepAngle
             && _absolutePosition.getValueAsDouble()
                 < SuperStructureConstants.PrepAngle
                     - 2)) { // protect against rotating the short way
@@ -97,7 +96,7 @@ public class ArmTalonFx implements ArmIO {
     return new Rotation2d(
         Units.rotationsToRadians(_armEncoder.getAbsolutePosition().getValueAsDouble()));
   }
-  
+
   @Override
   public void updateInputs(ArmIOInputs inputs) {
     inputs.angle = getAngle().getDegrees();

@@ -21,15 +21,7 @@ public class ExtensionSim implements ExtensionIO {
     stdDevs[1] = 0.004;
     extension =
         new ElevatorSim(
-            DCMotor.getKrakenX60(1),
-            20,
-            5,
-            Units.inchesToMeters(4),
-            0,
-            4,
-            false,
-            0,
-            stdDevs);
+            DCMotor.getKrakenX60(1), 20, 5, Units.inchesToMeters(4), 0, 4, false, 0, stdDevs);
 
     controller = new PIDController(5, 0, 0);
   }
