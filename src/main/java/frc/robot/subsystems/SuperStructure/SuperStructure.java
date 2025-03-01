@@ -28,8 +28,8 @@ public class SuperStructure {
 
   /** updates superstructue values periodically */
   public void structPeriodic() {
-      arm.armPeriodic();
-      extension.extensionPeriodic();
+    arm.armPeriodic();
+    extension.extensionPeriodic();
   }
 
   /**
@@ -97,8 +97,7 @@ public class SuperStructure {
       armAngle = SuperStructureConstants.HomeAngle;
       extendDistance = SuperStructureConstants.HomeExtend;
       lastPose = "";
-    }
-    else if (lastPose == "S" && arm.atTarget() && drRt) {
+    } else if (lastPose == "S" && arm.atTarget() && drRt) {
       extendDistance -= SuperStructureConstants.scoreExtendDrop;
       armAngle -= SuperStructureConstants.scoreAngleDrop;
       lastPose = "D";

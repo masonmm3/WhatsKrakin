@@ -21,11 +21,11 @@ import frc.robot.subsystems.SuperStructure.SuperStructureConstants;
 
 /** Add your docs here. */
 public class ExtensionTalonFx implements ExtensionIO {
-  private TalonFX _extendMotorK;
-  private CANcoder _extendEncoder;
+  public TalonFX _extendMotorK;
+  public CANcoder _extendEncoder;
 
-  private static StatusSignal<Angle> _absolutePosition;
-  private static StatusSignal<AngularVelocity> _extendVelocity;
+  public static StatusSignal<Angle> _absolutePosition;
+  public static StatusSignal<AngularVelocity> _extendVelocity;
 
   public ExtensionTalonFx() {
     _extendMotorK = new TalonFX(SuperStructureConstants.ExtensionId);
@@ -92,6 +92,7 @@ public class ExtensionTalonFx implements ExtensionIO {
   @Override
   public void updateInputs(ExtensionIOInputs inputs) {
     inputs.extend = getExtend();
+    BaseStatusSignal.refreshAll(_absolutePosition);
   }
   // TODO zero using absolute encoder
   // TODO add input loggging

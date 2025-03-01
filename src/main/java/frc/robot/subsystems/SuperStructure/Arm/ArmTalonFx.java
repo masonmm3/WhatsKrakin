@@ -23,11 +23,11 @@ import frc.robot.subsystems.SuperStructure.SuperStructureConstants;
 
 /** Add your docs here. */
 public class ArmTalonFx implements ArmIO {
-  private TalonFX _angleMotorK;
-  private CANcoder _armEncoder;
+  public TalonFX _angleMotorK;
+  public CANcoder _armEncoder;
 
-  private static StatusSignal<Angle> _absolutePosition;
-  private static StatusSignal<AngularVelocity> _armVelocity;
+  public static StatusSignal<Angle> _absolutePosition;
+  public static StatusSignal<AngularVelocity> _armVelocity;
 
   public ArmTalonFx() {
     _angleMotorK = new TalonFX(SuperStructureConstants.ArmId);
@@ -81,7 +81,7 @@ public class ArmTalonFx implements ArmIO {
     double goTo;
     if ((angle * 360 < SuperStructureConstants.PrepAngle
             && _absolutePosition.getValueAsDouble() * 360 > SuperStructureConstants.PrepAngle + 2)
-        || (angle * 360 > SuperStructureConstants.PrepAngle 
+        || (angle * 360 > SuperStructureConstants.PrepAngle
             && _absolutePosition.getValueAsDouble()
                 < SuperStructureConstants.PrepAngle
                     - 2)) { // protect against rotating the short way
@@ -97,10 +97,11 @@ public class ArmTalonFx implements ArmIO {
     return new Rotation2d(
         Units.rotationsToRadians(_armEncoder.getAbsolutePosition().getValueAsDouble()));
   }
-  
+
   @Override
   public void updateInputs(ArmIOInputs inputs) {
     inputs.angle = getAngle().getDegrees();
+    BaseStatusSignal.refreshAll(_absolutePosition);
   }
   // TODO add Input logging
 }
