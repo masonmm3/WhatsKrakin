@@ -5,6 +5,7 @@
 package frc.robot.subsystems.SuperStructure.Arm;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -14,21 +15,23 @@ import frc.robot.subsystems.SuperStructure.SuperStructureConstants;
 
 /** Add your docs here. */
 public class ArmSim implements ArmIO {
-  private PIDController pid;
+  private PIDController controller;
   private SingleJointedArmSim arm;
+  private ArmFeedforward feedforward;
 
   public ArmSim() {
     arm =
         new SingleJointedArmSim(
             DCMotor.getKrakenX60(1),
-            50,
-            SingleJointedArmSim.estimateMOI(Units.inchesToMeters(8), 5),
-            Units.inchesToMeters(8),
+            6.6,
+            SingleJointedArmSim.estimateMOI(Units.inchesToMeters(15), 5),
+            Units.inchesToMeters(15),
             Units.degreesToRadians(-90),
             Units.degreesToRadians(270),
-            false,
+            true,
             0);
-    pid = new PIDController(1, 0, 0.01);
+    controller = new PIDController(0.1, 0, 0.01);
+    feedforward = new ArmFeedforward(0.001, 2.395, 0);
   }
 
   @Override
@@ -44,7 +47,15 @@ public class ArmSim implements ArmIO {
     } else {
       goTo = angle * 360;
     }
-    double volts = MathUtil.clamp(pid.calculate(getAngle().getDegrees(), goTo), -12, 12);
+    double pid = controller.calculate(getAngle().getDegrees(), goTo);
+    double feed =
+        feedforward.calculate(
+            getAngle().getRadians(), Units.degreesToRadians(goTo) - getAngle().getRadians());
+    double volts =
+        MathUtil.clamp(
+            pid + feed,
+            -SuperStructureConstants.anglePeakVoltage,
+            SuperStructureConstants.anglePeakVoltage);
     arm.setInputVoltage(volts);
   }
 
@@ -56,6 +67,13 @@ public class ArmSim implements ArmIO {
   @Override
   public void updateInputs(ArmIOInputs inputs) {
     arm.update(0.02);
-    inputs.angle = getAngle().getDegrees();
+    inputs.connected = true;
+    inputs.positionAngle = getAngle().getDegrees();
+    inputs.velocityRPM = Units.radiansPerSecondToRotationsPerMinute(arm.getVelocityRadPerSec());
+
+    inputs.appliedVoltage = arm.getInput(0);
+    inputs.supplyCurrentAmps = arm.getCurrentDrawAmps();
+    inputs.torqueCurrentAmps = arm.getCurrentDrawAmps();
+    inputs.temperatureCelsius = 2120; // the atmosphere might catch fire
   }
 }

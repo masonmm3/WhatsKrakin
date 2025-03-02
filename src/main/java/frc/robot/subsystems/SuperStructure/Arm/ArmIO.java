@@ -11,7 +11,15 @@ import org.littletonrobotics.junction.AutoLog;
 public interface ArmIO {
   @AutoLog // Auto logs inputs
   public static class ArmIOInputs {
-    public double angle = 0; // Gets the angle number as zero to start with
+    public boolean connected = false;
+
+    public double positionAngle = 0.0;
+    public double velocityRPM = 0.0;
+
+    public double appliedVoltage = 0.0;
+    public double supplyCurrentAmps = 0.0;
+    public double torqueCurrentAmps = 0.0;
+    public double temperatureCelsius = 0.0;
   }
 
   public default void updateInputs(ArmIOInputs inputs) {} // Updates inputs
@@ -20,6 +28,8 @@ public interface ArmIO {
    * @param angle go to angle in rotations
    */
   public default void setAngle(double angle) {}
+
+  public default void runVolts(double volts) {}
 
   /**
    * gives current angle of actual arm
