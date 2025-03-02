@@ -10,11 +10,13 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.ParentDevice;
+// import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import frc.robot.subsystems.SuperStructure.SuperStructureConstants;
@@ -22,14 +24,13 @@ import frc.robot.subsystems.SuperStructure.SuperStructureConstants;
 /** Add your docs here. */
 public class ExtensionTalonFx implements ExtensionIO {
   public TalonFX _extendMotorK;
-  public CANcoder _extendEncoder;
+  private final CANcoder _extendEncoder = new CANcoder(SuperStructureConstants.ExtensionEncoderID);
 
-  public static StatusSignal<Angle> _absolutePosition;
-  public static StatusSignal<AngularVelocity> _extendVelocity;
+   public static StatusSignal<Angle> _absolutePosition;
+   public static StatusSignal<AngularVelocity> _extendVelocity;
 
   public ExtensionTalonFx() {
     _extendMotorK = new TalonFX(SuperStructureConstants.ExtensionId);
-    _extendEncoder = new CANcoder(SuperStructureConstants.ExtensionEncoderID);
 
     var _extendConfig = new TalonFXConfiguration();
     // current limits and ramp rates
@@ -43,7 +44,7 @@ public class ExtensionTalonFx implements ExtensionIO {
     _extendConfig.ClosedLoopGeneral.ContinuousWrap = false;
     _extendConfig.Feedback.FeedbackRemoteSensorID = _extendEncoder.getDeviceID();
     _extendConfig.Feedback.FeedbackSensorSource =
-        FeedbackSensorSourceValue.SyncCANcoder; // Should be fused? or sync
+        FeedbackSensorSourceValue.RotorSensor; // Should be fused? or sync
     _extendConfig.Feedback.RotorToSensorRatio = SuperStructureConstants.ExtensionGearRatio;
     _extendConfig.Feedback.SensorToMechanismRatio = 1;
 
@@ -74,11 +75,11 @@ public class ExtensionTalonFx implements ExtensionIO {
 
     _extendMotorK.getConfigurator().apply(_extendConfig);
 
-    _absolutePosition = _extendEncoder.getAbsolutePosition();
-    _extendVelocity = _extendEncoder.getVelocity();
+      _absolutePosition = _extendEncoder.getAbsolutePosition();
+      _extendVelocity = _extendEncoder.getVelocity();
 
-    BaseStatusSignal.setUpdateFrequencyForAll(50, _absolutePosition, _extendVelocity);
-    ParentDevice.optimizeBusUtilizationForAll(_extendMotorK);
+     BaseStatusSignal.setUpdateFrequencyForAll(50, _absolutePosition, _extendVelocity);
+     _extendMotorK.optimizeBusUtilization();
   }
 
   @Override
@@ -94,8 +95,8 @@ public class ExtensionTalonFx implements ExtensionIO {
 
   @Override
   public void updateInputs(ExtensionIOInputs inputs) {
-    BaseStatusSignal.refreshAll(_absolutePosition);
-    BaseStatusSignal.refreshAll(_extendVelocity);
+     StatusSignal.refreshAll(_absolutePosition, _extendVelocity);
+    // BaseStatusSignal.refreshAll(_extendVelocity);
     inputs.extend = getExtend();
   }
   // TODO zero using absolute encoder
