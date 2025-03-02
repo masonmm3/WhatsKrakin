@@ -43,7 +43,7 @@ public class ExtensionTalonFx implements ExtensionIO {
     _extendConfig.ClosedLoopGeneral.ContinuousWrap = false;
     _extendConfig.Feedback.FeedbackRemoteSensorID = _extendEncoder.getDeviceID();
     _extendConfig.Feedback.FeedbackSensorSource =
-        FeedbackSensorSourceValue.FusedCANcoder; // Should be fused? or sync
+        FeedbackSensorSourceValue.SyncCANcoder; // Should be fused? or sync
     _extendConfig.Feedback.RotorToSensorRatio = SuperStructureConstants.ExtensionGearRatio;
     _extendConfig.Feedback.SensorToMechanismRatio = 1;
 

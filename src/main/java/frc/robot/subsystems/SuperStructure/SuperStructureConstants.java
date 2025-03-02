@@ -8,9 +8,9 @@ package frc.robot.subsystems.SuperStructure;
 public final class SuperStructureConstants {
 
   // Constants
-  public static int ArmId = 20;
+  public static int ArmId = 21;
   public static int ArmEncoderId = 22;
-  public static int ExtensionId = 21;
+  public static int ExtensionId = 20;
   public static int ExtensionEncoderID = 23;
 
   // Setpoints PLEASE USE POSITIVE NUMBERS -90 = 270
@@ -19,9 +19,9 @@ public final class SuperStructureConstants {
   public static double L2Extend = 0;
   public static double L1Extend = 0;
 
-  public static double L4Angle = 3;
-  public static double L3Angle = 2;
-  public static double L2Angle = 1;
+  public static double L4Angle = 30;
+  public static double L3Angle = 20;
+  public static double L2Angle = 10;
   public static double L1Angle = 0;
 
   public static double PrepAngle = 90; // should be straight up. (NEEDS TO BE STRAIGHT UP)
@@ -40,13 +40,13 @@ public final class SuperStructureConstants {
   public static double HomeExtend = 0;
 
   // closed loop
-  public static double AngleP = 2;
+  public static double AngleP = 30; // 5
   public static double AngleI = 0;
   public static double AngleD = 0;
   public static double AngleS = 0;
-  public static double AngleV = 0.1;
-  public static double AngleA = 0;
-  public static double AngleG = 0.2;
+  public static double AngleV = 0.7; // 0.1
+  public static double AngleA = 0.02;
+  public static double AngleG = 0.2; // 0.2
   public static double angleSoftLimitLow = 0;
   public static double angleSoftLimitHigh = 0;
   public static double angleGearRatio = 84 / 12;
