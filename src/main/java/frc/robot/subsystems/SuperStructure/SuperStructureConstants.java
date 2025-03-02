@@ -31,30 +31,30 @@ public final class SuperStructureConstants {
   public static double extensionPeakVoltage = 6;
 
   // Setpoints PLEASE USE POSITIVE NUMBERS -90 = 270
-  public static double L4Extend = 70;
+  public static double L4Extend = 33;
   public static double L3Extend = 0;
   public static double L2Extend = 0;
   public static double L1Extend = 0;
 
-  public static double L4Angle = 110;
+  public static double L4Angle = 95;
   public static double L3Angle = 0;
   public static double L2Angle = 0;
   public static double L1Angle = 0;
 
   public static double PrepAngle = 90; // should be straight up. (NEEDS TO BE STRAIGHT UP)
-  public static double PrepExtend = 0;
+  public static double PrepExtend = 5;
 
-  public static double CollectPrepAngle = 0;
-  public static double CollectPrepExtend = 0;
+  public static double CollectPrepAngle = -70;
+  public static double CollectPrepExtend = 5;
 
-  public static double CollectAngle = 0;
-  public static double CollectExtend = 0;
+  public static double CollectAngle = -70;
+  public static double CollectExtend = 6;
 
-  public static double scoreAngleDrop = 0;
-  public static double scoreExtendDrop = 0;
+  public static double scoreAngleDrop = -12;
+  public static double scoreExtendDrop = 10;
 
-  public static double HomeAngle = 0;
-  public static double HomeExtend = 0;
+  public static double HomeAngle = -70;
+  public static double HomeExtend = 5;
 
   // closed loop
   public static double AngleP = 2;

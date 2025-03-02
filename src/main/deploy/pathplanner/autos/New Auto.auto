@@ -5,9 +5,28 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "race",
           "data": {
-            "pathName": "CTCR"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Center1"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Prep"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4"
           }
         }
       ]

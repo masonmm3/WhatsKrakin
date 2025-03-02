@@ -19,20 +19,26 @@ public class ExtensionSim implements ExtensionIO {
   public ElevatorFeedforward feedforward;
 
   public ExtensionSim() {
-    double[] stdDevs = new double[2];
-    
+
     extension =
         new ElevatorSim(
-            DCMotor.getKrakenX60(1), 6.66, 5, Units.inchesToMeters(4), 0, Units.inchesToMeters(75), true, 0);
+            DCMotor.getKrakenX60(1),
+            6.66,
+            5,
+            Units.inchesToMeters(4),
+            0,
+            Units.inchesToMeters(75),
+            true,
+            0);
 
-    controller = new PIDController(1, 0, 0);
-    feedforward = new ElevatorFeedforward(0.001, 0.03, 0.5);
+    controller = new PIDController(2, 0, 0.1);
+    feedforward = new ElevatorFeedforward(0.01, 0.1, 01);
   }
 
   @Override
   public void extendToDistance(double inch) {
     double pid = controller.calculate(getExtend(), inch);
-    double feed = feedforward.calculate(inch - getExtend(), (inch - getExtend())/4);
+    double feed = feedforward.calculate(inch - getExtend(), (inch - getExtend()) / 4);
     double volts =
         MathUtil.clamp(
             pid + feed,

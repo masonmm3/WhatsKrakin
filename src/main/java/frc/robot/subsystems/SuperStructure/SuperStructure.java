@@ -4,7 +4,9 @@
 
 package frc.robot.subsystems.SuperStructure;
 
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.subsystems.SuperStructure.Arm.Arm;
 import frc.robot.subsystems.SuperStructure.Extension.Extension;
@@ -18,6 +20,8 @@ public class SuperStructure {
   private double armAngle;
   private double extendDistance;
   private String lastPose;
+  public Pose3d extensionPose = new Pose3d();
+  public Pose3d armPose = new Pose3d();
 
   public SuperStructure(Arm arm, Extension extension) {
     this.arm = arm;
@@ -32,9 +36,27 @@ public class SuperStructure {
   public void structPeriodic() {
     arm.armPeriodic();
     extension.extensionPeriodic();
+
+    extensionPose =
+        new Pose3d(
+            Units.inchesToMeters(-extension.getExtinsion() * arm.getAngle().getCos())
+                + Units.inchesToMeters(8),
+            0,
+            Units.inchesToMeters(extension.getExtinsion() * arm.getAngle().getSin())
+                + Units.inchesToMeters(32),
+            new Rotation3d(0, arm.getAngle().getRadians() + Units.degreesToRadians(180), 0));
+    armPose =
+        new Pose3d(
+            Units.inchesToMeters(8),
+            0,
+            Units.inchesToMeters(32),
+            new Rotation3d(0, arm.getAngle().getRadians() + Units.degreesToRadians(90), 0));
+
     Logger.recordOutput("Arm/sequencePose", lastPose);
     Logger.recordOutput("Arm/Pivot/target", armAngle);
     Logger.recordOutput("Arm/Extension/taget", extendDistance);
+    Logger.recordOutput("Arm/Extension/pose", extensionPose);
+    Logger.recordOutput("Arm/Pivot/pose", armPose);
   }
 
   /**
@@ -226,10 +248,13 @@ public class SuperStructure {
 
   public void setArm(double angle) {
     arm.setPosition(new Rotation2d(Units.degreesToRadians(angle)));
+    armAngle = angle;
+
   }
 
   public void setExtension(double extend) {
     extension.extendToDistance(extend);
+    extendDistance = extend;
   }
 
   public boolean atSetpoint() {

@@ -16,6 +16,9 @@ public class ArmL4 extends Command {
 
   private boolean scored;
   private boolean finished;
+  private boolean starting;
+  private double angle;
+  private double extend;
 
   public ArmL4() {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -26,39 +29,46 @@ public class ArmL4 extends Command {
   public void initialize() {
     timer.stop();
     timer.reset();
-    timer.start();
+    timer.restart();
     scored = false;
     finished = false;
+    starting = true;
+    angle = SuperStructureConstants.HomeAngle;
+    extend = SuperStructureConstants.HomeExtend;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (timer.get() < 0.5) {
-      RobotContainer.superStructure.setArm(SuperStructureConstants.L4Angle);
-      RobotContainer.superStructure.setExtension(SuperStructureConstants.L4Extend);
-    } else if (RobotContainer.superStructure.atSetpoint() && !scored) {
-      RobotContainer.superStructure.setArm(
-          SuperStructureConstants.L4Angle - SuperStructureConstants.scoreAngleDrop);
-      RobotContainer.superStructure.setExtension(
-          SuperStructureConstants.L4Extend - SuperStructureConstants.scoreExtendDrop);
+    if (RobotContainer.superStructure.atSetpoint() && !starting && !scored) {
+      angle -= SuperStructureConstants.scoreAngleDrop;
+      extend -= SuperStructureConstants.scoreExtendDrop;
       scored = true;
-    } else if (RobotContainer.superStructure.atSetpoint() && scored) {
-      RobotContainer.superStructure.setArm(SuperStructureConstants.HomeAngle);
-      RobotContainer.superStructure.setExtension(SuperStructureConstants.HomeExtend);
+      timer.restart();
+    } else if (RobotContainer.superStructure.atSetpoint() && scored && timer.get() > 0.5 && !starting) {
+      angle = SuperStructureConstants.HomeAngle;
+      extend = SuperStructureConstants.HomeExtend;
+      finished = true;
+    } else if (!scored) {
+      angle = SuperStructureConstants.L4Angle;
+      extend = SuperStructureConstants.L4Extend;
+      starting = false;
     }
+
+    RobotContainer.superStructure.setArm(angle);
+    RobotContainer.superStructure.setExtension(extend);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    RobotContainer.superStructure.setArm(SuperStructureConstants.HomeAngle);
-    RobotContainer.superStructure.setExtension(SuperStructureConstants.HomeExtend);
+    RobotContainer.superStructure.setArm(angle);
+    RobotContainer.superStructure.setExtension(extend);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return RobotContainer.superStructure.atSetpoint() && finished;
+    return RobotContainer.superStructure.atSetpoint() && finished && scored;
   }
 }

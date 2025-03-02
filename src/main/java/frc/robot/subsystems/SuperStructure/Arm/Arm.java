@@ -28,6 +28,10 @@ public class Arm {
     this.Angle = Angle.getDegrees();
   }
 
+  public Rotation2d getAngle() {
+    return io.getAngle();
+  }
+
   public boolean atTarget() {
     if (Angle < (io.getAngle().getDegrees() + 1) && Angle > io.getAngle().getDegrees() - 1) {
       return true;
