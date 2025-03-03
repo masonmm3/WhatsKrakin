@@ -1,12 +1,24 @@
 {
-  "name": "Kraken", 
-  "sourceUrl": "", 
-  "disableSimplification": false, 
-  "rotations": [{ "axis": "x", "degrees": 90 },
-   { "axis": "z", "degrees": 0 }], 
-  "position": [0, 0, 0.0508], 
+  "name": "Kraken",
+  "sourceUrl": "",
+  "disableSimplification": false,
+  "rotations": [
+    {
+      "axis": "x",
+      "degrees": 90
+    },
+    {
+      "axis": "z",
+      "degrees": 0
+    }
+  ],
+  "position": [
+    0,
+    0,
+    0.0508
+  ],
   "cameras": [
-	{
+    {
       "name": "W",
       "rotations": [
         {
@@ -29,7 +41,7 @@
       ],
       "fov": 100
     },
-	{
+    {
       "name": "RearOUT",
       "rotations": [
         {
@@ -52,7 +64,7 @@
       ],
       "fov": 100
     },
-	{
+    {
       "name": "FrontIn",
       "rotations": [
         {
@@ -77,49 +89,47 @@
     }
   ],
   "components": [
-  {
+    {
       "zeroedRotations": [
         {
           "axis": "z",
           "degrees": 90
         },
-		{
-			"axis": "x",
-			"degrees": 90
-		},
-		{
-			"axis": "y",
-			"degrees": 180
-		}
+        {
+          "axis": "x",
+          "degrees": 90
+        },
+        {
+          "axis": "y",
+          "degrees": 180
+        }
       ],
       "zeroedPosition": [
         0.0,
         0.0,
         0.0
-		
       ]
     },
-	{ 
+    {
       "zeroedRotations": [
         {
           "axis": "z",
           "degrees": 0
         },
-		{
-			"axis": "x",
-			"degrees": 90
-		},
-		{
-			"axis": "y",
-			"degrees": 0
-		}
+        {
+          "axis": "x",
+          "degrees": 90
+        },
+        {
+          "axis": "y",
+          "degrees": 0
+        }
       ],
       "zeroedPosition": [
         0.0,
         0.0,
         -0.05
-		
       ]
     }
-    ]
+  ]
 }

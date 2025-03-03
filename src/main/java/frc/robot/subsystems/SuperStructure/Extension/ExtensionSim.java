@@ -63,7 +63,7 @@ public class ExtensionSim implements ExtensionIO {
     inputs.positionInch = getExtend();
     inputs.velocityRPM =
         Units.metersToInches(
-            extension.getVelocityMetersPerSecond() / (2 * Math.PI * Units.inchesToMeters(4)));
+            extension.getVelocityMetersPerSecond() / (2 * Math.PI * Units.inchesToMeters(2)));
 
     inputs.appliedVoltage = extension.getInput(0);
     inputs.supplyCurrentAmps = extension.getCurrentDrawAmps();

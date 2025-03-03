@@ -45,7 +45,7 @@ public final class SuperStructureConstants {
   public static double PrepExtend = 5;
 
   public static double CollectPrepAngle = -70;
-  public static double CollectPrepExtend = 5;
+  public static double CollectPrepExtend = 10;
 
   public static double CollectAngle = -70;
   public static double CollectExtend = 6;
@@ -54,7 +54,7 @@ public final class SuperStructureConstants {
   public static double scoreExtendDrop = 10;
 
   public static double HomeAngle = -70;
-  public static double HomeExtend = 5;
+  public static double HomeExtend = 10;
 
   // closed loop
   public static double AngleP = 2;
@@ -64,8 +64,8 @@ public final class SuperStructureConstants {
   public static double AngleV = 0.1;
   public static double AngleA = 0;
   public static double AngleG = 0.2;
-  public static double angleSoftLimitLow = 0;
-  public static double angleSoftLimitHigh = 0;
+  public static double angleSoftLimitLow = 270;
+  public static double angleSoftLimitHigh = 280;
   public static double angleGearRatio = 84 / 12;
 
   public static double ExtensionP = 0;
@@ -75,7 +75,7 @@ public final class SuperStructureConstants {
   public static double ExtensionV = 0;
   public static double ExtensionA = 0;
   public static double ExtensionG = 0;
-  public static double ExtensionSoftLimitLow = 0;
-  public static double ExtensionSoftLimitHigh = 0;
+  public static double ExtensionSoftLimitLow = 9 / (2 * Math.PI * 2);
+  public static double ExtensionSoftLimitHigh = 40 / (2 * Math.PI * 2);
   public static double ExtensionGearRatio = 80 / 12;
 }

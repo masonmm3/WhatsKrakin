@@ -45,7 +45,10 @@ public class ArmL4 extends Command {
       extend -= SuperStructureConstants.scoreExtendDrop;
       scored = true;
       timer.restart();
-    } else if (RobotContainer.superStructure.atSetpoint() && scored && timer.get() > 0.5 && !starting) {
+    } else if (RobotContainer.superStructure.atSetpoint()
+        && scored
+        && timer.get() > 0.5
+        && !starting) {
       angle = SuperStructureConstants.HomeAngle;
       extend = SuperStructureConstants.HomeExtend;
       finished = true;

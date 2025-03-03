@@ -9,9 +9,6 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.hardware.CANcoder;
- import com.ctre.phoenix6.hardware.ParentDevice;
-
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -50,7 +47,6 @@ public class ArmTalonFx implements ArmIO {
     torqueCurrentAmps = _angleMotorK.getTorqueCurrent();
     tempCelsius = _angleMotorK.getDeviceTemp();
 
-
     TalonFXConfiguration cfg = new TalonFXConfiguration();
     // spotless:off
     cfg.MotorOutput
@@ -85,14 +81,12 @@ public class ArmTalonFx implements ArmIO {
     _angleMotorK.optimizeBusUtilization(0.0, 1.0);
 
     _angleMotorK.getConfigurator().apply(cfg);
-
   }
 
   @Override
   public void setAngle(double angle) {
     double goTo;
     if ((angle * 360 < SuperStructureConstants.PrepAngle
-
             && _angleMotorK.getPosition().getValueAsDouble() * 360
                 > SuperStructureConstants.PrepAngle + 2)
         || (angle * 360 > SuperStructureConstants.PrepAngle
@@ -131,7 +125,6 @@ public class ArmTalonFx implements ArmIO {
     inputs.supplyCurrentAmps = supplyCurrentAmps.getValueAsDouble();
     inputs.torqueCurrentAmps = torqueCurrentAmps.getValueAsDouble();
     inputs.temperatureCelsius = tempCelsius.getValueAsDouble();
-
   }
   // TODO add Input logging
 }

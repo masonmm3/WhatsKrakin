@@ -15,21 +15,23 @@ import org.littletonrobotics.junction.Logger;
 
 /** Add your docs here. */
 public class SuperStructure {
-  private Arm arm;
-  private Extension extension;
-  private double armAngle;
-  private double extendDistance;
-  private String lastPose;
-  public Pose3d extensionPose = new Pose3d();
-  public Pose3d armPose = new Pose3d();
+  private Arm arm; // gets arm class as variable and allows for use of arm functions
+  private Extension
+      extension; // gets extend class as variable and allows for use of extend functions
+  private double armAngle; // arm angle number
+  private double extendDistance; // extend distance number
+  private String lastPose; // adds a string(a sequence of characters)
+  public Pose3d extensionPose =
+      new Pose3d(); // creates a pose in 3D by using all the axis (x, y, z) and calculates it
+  public Pose3d armPose = new Pose3d(); //
 
   public SuperStructure(Arm arm, Extension extension) {
-    this.arm = arm;
+    this.arm = arm; // tells arm that it is arm and allows it to be modified
     this.extension = extension;
 
-    lastPose = sequence.Home;
-    armAngle = 0;
-    extendDistance = 0;
+    lastPose = sequence.Home; // Makes it go to home no matter the last pose
+    armAngle = 0; // logs the arm angle
+    extendDistance = 0; // logs the extend distance
   }
 
   /** updates superstructue values periodically */
@@ -249,7 +251,6 @@ public class SuperStructure {
   public void setArm(double angle) {
     arm.setPosition(new Rotation2d(Units.degreesToRadians(angle)));
     armAngle = angle;
-
   }
 
   public void setExtension(double extend) {

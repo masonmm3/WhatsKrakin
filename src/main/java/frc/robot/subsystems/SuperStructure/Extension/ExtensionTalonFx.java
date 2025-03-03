@@ -9,16 +9,12 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.math.util.Units;
-
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -85,12 +81,11 @@ public class ExtensionTalonFx implements ExtensionIO {
     _extendMotorK.optimizeBusUtilization(0.0, 1.0);
 
     _extendMotorK.getConfigurator().apply(cfg);
-
   }
 
   @Override
   public void extendToDistance(double inch) {
-    double target = inch / (2 * Math.PI * 4);
+    double target = inch / (2 * Math.PI * 2);
     _extendMotorK.setControl(positonOut.withPosition(target).withSlot(0));
   }
 
@@ -101,7 +96,7 @@ public class ExtensionTalonFx implements ExtensionIO {
 
   @Override
   public double getExtend() {
-    return _extendMotorK.getPosition().getValueAsDouble() * (2 * Math.PI * 4);
+    return _extendMotorK.getPosition().getValueAsDouble() * (2 * Math.PI * 2);
   }
 
   @Override
@@ -111,14 +106,13 @@ public class ExtensionTalonFx implements ExtensionIO {
                 position, velocity, voltage, supplyCurrentAmps, torqueCurrentAmps, tempCelsius)
             .isOK();
 
-    inputs.positionInch = position.getValueAsDouble() * (2 * Math.PI * 4);
+    inputs.positionInch = position.getValueAsDouble() * (2 * Math.PI * 2);
     inputs.velocityRPM = Units.radiansPerSecondToRotationsPerMinute(velocity.getValueAsDouble());
 
     inputs.appliedVoltage = voltage.getValueAsDouble();
     inputs.supplyCurrentAmps = supplyCurrentAmps.getValueAsDouble();
     inputs.torqueCurrentAmps = torqueCurrentAmps.getValueAsDouble();
     inputs.temperatureCelsius = tempCelsius.getValueAsDouble();
-
   }
   // TODO add absolute encoder
   // TODO add input loggging
