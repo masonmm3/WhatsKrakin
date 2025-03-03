@@ -9,12 +9,16 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
 import edu.wpi.first.math.util.Units;
+
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -24,6 +28,7 @@ import frc.robot.subsystems.SuperStructure.SuperStructureConstants;
 
 /** Add your docs here. */
 public class ExtensionTalonFx implements ExtensionIO {
+
   private final TalonFX _extendMotorK;
 
   private final StatusSignal<Angle> position;
@@ -80,6 +85,7 @@ public class ExtensionTalonFx implements ExtensionIO {
     _extendMotorK.optimizeBusUtilization(0.0, 1.0);
 
     _extendMotorK.getConfigurator().apply(cfg);
+
   }
 
   @Override
@@ -112,6 +118,7 @@ public class ExtensionTalonFx implements ExtensionIO {
     inputs.supplyCurrentAmps = supplyCurrentAmps.getValueAsDouble();
     inputs.torqueCurrentAmps = torqueCurrentAmps.getValueAsDouble();
     inputs.temperatureCelsius = tempCelsius.getValueAsDouble();
+
   }
   // TODO add absolute encoder
   // TODO add input loggging
