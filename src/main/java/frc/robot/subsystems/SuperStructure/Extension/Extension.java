@@ -27,6 +27,10 @@ public class Extension {
     this.inch = inch;
   }
 
+  public double getExtinsion() {
+    return io.getExtend();
+  }
+
   public boolean atExtension() {
     if (inch < (io.getExtend() + 0.5) && inch > io.getExtend() - 0.5) {
       return true;

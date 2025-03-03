@@ -8,84 +8,95 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.ParentDevice;
-// import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.util.Units;
+
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Temperature;
+import edu.wpi.first.units.measure.Voltage;
 import frc.robot.subsystems.SuperStructure.SuperStructureConstants;
 
 /** Add your docs here. */
 public class ExtensionTalonFx implements ExtensionIO {
-  public TalonFX _extendMotorK;
-  private final CANcoder _extendEncoder = new CANcoder(SuperStructureConstants.ExtensionEncoderID);
 
-   public static StatusSignal<Angle> _absolutePosition;
-   public static StatusSignal<AngularVelocity> _extendVelocity;
+  private final TalonFX _extendMotorK;
+
+  private final StatusSignal<Angle> position;
+  private final StatusSignal<AngularVelocity> velocity;
+  private final StatusSignal<Voltage> voltage;
+  private final StatusSignal<Current> supplyCurrentAmps;
+  private final StatusSignal<Current> torqueCurrentAmps;
+  private final StatusSignal<Temperature> tempCelsius;
+
+  private final PositionVoltage positonOut = new PositionVoltage(0).withSlot(0);
+  private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
 
   public ExtensionTalonFx() {
     _extendMotorK = new TalonFX(SuperStructureConstants.ExtensionId);
 
-    var _extendConfig = new TalonFXConfiguration();
-    // current limits and ramp rates
-    _extendConfig.CurrentLimits.StatorCurrentLimit = 45;
-    _extendConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    _extendConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    _extendConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    _extendConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.1;
-    _extendConfig.ClosedLoopRamps.TorqueClosedLoopRampPeriod = 0.1;
-    // Closed loop settings
-    _extendConfig.ClosedLoopGeneral.ContinuousWrap = false;
-    _extendConfig.Feedback.FeedbackRemoteSensorID = _extendEncoder.getDeviceID();
-    _extendConfig.Feedback.FeedbackSensorSource =
-        FeedbackSensorSourceValue.RotorSensor; // Should be fused? or sync
-    _extendConfig.Feedback.RotorToSensorRatio = SuperStructureConstants.ExtensionGearRatio;
-    _extendConfig.Feedback.SensorToMechanismRatio = 1;
+    position = _extendMotorK.getPosition();
+    velocity = _extendMotorK.getVelocity();
+    voltage = _extendMotorK.getMotorVoltage();
+    supplyCurrentAmps = _extendMotorK.getSupplyCurrent();
+    torqueCurrentAmps = _extendMotorK.getTorqueCurrent();
+    tempCelsius = _extendMotorK.getDeviceTemp();
 
-    double extendInchToRotations =
-        80 / 12; // Find circumference and multiply by ratio. Idea (2 rotation = 10 inch, 6.6 Motor
-    // rotations = 1 rotation so 13.2 rotations = 10 inch)
-
-    _extendConfig.Feedback.RotorToSensorRatio = extendInchToRotations;
-    _extendConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
-    // GPID and VAS
-    _extendConfig.Slot0.kP = SuperStructureConstants.ExtensionP;
-    _extendConfig.Slot0.kI = SuperStructureConstants.ExtensionI;
-    _extendConfig.Slot0.kD = SuperStructureConstants.ExtensionD;
-    _extendConfig.Slot0.kG = SuperStructureConstants.ExtensionG;
-    _extendConfig.Slot0.kV = SuperStructureConstants.ExtensionV;
-    _extendConfig.Slot0.kS = SuperStructureConstants.ExtensionS;
-    _extendConfig.Slot0.kA = SuperStructureConstants.ExtensionA;
-    // software limits
-    _extendConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    _extendConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
-        SuperStructureConstants.ExtensionSoftLimitHigh;
-    _extendConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    _extendConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
-        SuperStructureConstants.ExtensionSoftLimitLow;
+    TalonFXConfiguration cfg = new TalonFXConfiguration();
+    // spotless:off
+    cfg.MotorOutput
+        .withInverted(SuperStructureConstants.ExtensionInvert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive)
+        .withNeutralMode(NeutralModeValue.Coast);
+    cfg.CurrentLimits
+        .withSupplyCurrentLimitEnable(true)
+        .withSupplyCurrentLimit(40);
+    cfg.ClosedLoopGeneral.ContinuousWrap = false;
+    cfg.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.1;
+    cfg.Slot0.kP = SuperStructureConstants.ExtensionP;
+    cfg.Slot0.kI = SuperStructureConstants.ExtensionI;
+    cfg.Slot0.kD = SuperStructureConstants.ExtensionD;
+    cfg.Slot0.kG = SuperStructureConstants.ExtensionG;
+    cfg.Slot0.kV = SuperStructureConstants.ExtensionV;
+    cfg.Slot0.kS = SuperStructureConstants.ExtensionS;
+    cfg.Slot0.kA = SuperStructureConstants.ExtensionA;
+    cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    cfg.SoftwareLimitSwitch.ForwardSoftLimitThreshold = SuperStructureConstants.ExtensionSoftLimitHigh;
+    cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    cfg.SoftwareLimitSwitch.ReverseSoftLimitThreshold = SuperStructureConstants.ExtensionSoftLimitLow;
+    cfg.Slot0.GravityType = GravityTypeValue.Elevator_Static;
+    cfg.Feedback.SensorToMechanismRatio = SuperStructureConstants.ExtensionGearRatio;
+    cfg.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
     // voltage limits
-    _extendConfig.Voltage.PeakForwardVoltage = 6; // put to 12 once we figure out everything
-    _extendConfig.Voltage.PeakReverseVoltage = -6; // put to 12 once we figure out everything
+    cfg.Voltage.PeakForwardVoltage = SuperStructureConstants.extensionPeakVoltage;
+    cfg.Voltage.PeakReverseVoltage = -SuperStructureConstants.extensionPeakVoltage;
+    // spotless:on
 
-    _extendMotorK.getConfigurator().apply(_extendConfig);
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        50, position, velocity, voltage, supplyCurrentAmps, torqueCurrentAmps, tempCelsius);
+    _extendMotorK.optimizeBusUtilization(0.0, 1.0);
 
-      _absolutePosition = _extendEncoder.getAbsolutePosition();
-      _extendVelocity = _extendEncoder.getVelocity();
+    _extendMotorK.getConfigurator().apply(cfg);
 
-     BaseStatusSignal.setUpdateFrequencyForAll(50, _absolutePosition, _extendVelocity);
-     _extendMotorK.optimizeBusUtilization();
   }
 
   @Override
   public void extendToDistance(double inch) {
     double target = inch / (2 * Math.PI * 4);
-    _extendMotorK.setControl(new PositionVoltage(target).withSlot(0));
+    _extendMotorK.setControl(positonOut.withPosition(target).withSlot(0));
+  }
+
+  @Override
+  public void runVolts(double volts) {
+    _extendMotorK.setControl(voltageOut.withOutput(volts));
   }
 
   @Override
@@ -95,10 +106,20 @@ public class ExtensionTalonFx implements ExtensionIO {
 
   @Override
   public void updateInputs(ExtensionIOInputs inputs) {
-     StatusSignal.refreshAll(_absolutePosition, _extendVelocity);
-    // BaseStatusSignal.refreshAll(_extendVelocity);
-    inputs.extend = getExtend();
+    inputs.connected =
+        BaseStatusSignal.refreshAll(
+                position, velocity, voltage, supplyCurrentAmps, torqueCurrentAmps, tempCelsius)
+            .isOK();
+
+    inputs.positionInch = position.getValueAsDouble() * (2 * Math.PI * 4);
+    inputs.velocityRPM = Units.radiansPerSecondToRotationsPerMinute(velocity.getValueAsDouble());
+
+    inputs.appliedVoltage = voltage.getValueAsDouble();
+    inputs.supplyCurrentAmps = supplyCurrentAmps.getValueAsDouble();
+    inputs.torqueCurrentAmps = torqueCurrentAmps.getValueAsDouble();
+    inputs.temperatureCelsius = tempCelsius.getValueAsDouble();
+
   }
-  // TODO zero using absolute encoder
+  // TODO add absolute encoder
   // TODO add input loggging
 }

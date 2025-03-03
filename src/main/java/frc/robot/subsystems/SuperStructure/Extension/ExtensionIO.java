@@ -11,7 +11,15 @@ public interface ExtensionIO {
 
   @AutoLog
   public static class ExtensionIOInputs {
-    public double extend = 0;
+    public boolean connected = false;
+
+    public double positionInch = 0.0;
+    public double velocityRPM = 0.0;
+
+    public double appliedVoltage = 0.0;
+    public double supplyCurrentAmps = 0.0;
+    public double torqueCurrentAmps = 0.0;
+    public double temperatureCelsius = 0.0;
   }
 
   public default void updateInputs(ExtensionIOInputs inputs) {}
@@ -20,6 +28,8 @@ public interface ExtensionIO {
    * @param inch extends to distance in inches from start
    */
   public default void extendToDistance(double inch) {}
+
+  public default void runVolts(double volts) {}
 
   public default double getExtend() {
     return 0;
