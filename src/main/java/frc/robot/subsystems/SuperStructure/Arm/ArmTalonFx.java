@@ -9,6 +9,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -27,7 +28,9 @@ import frc.robot.subsystems.SuperStructure.SuperStructureConstants;
 public class ArmTalonFx implements ArmIO {
 
   private final TalonFX _angleMotorK;
-
+  private final CANcoder _angleCANcoder;
+  private final StatusSignal<Angle> absolutePosition;
+  private final StatusSignal<AngularVelocity> absoluteVelocity;
   private final StatusSignal<Angle> position;
   private final StatusSignal<AngularVelocity> velocity;
   private final StatusSignal<Voltage> voltage;
@@ -40,12 +43,15 @@ public class ArmTalonFx implements ArmIO {
 
   public ArmTalonFx() {
     _angleMotorK = new TalonFX(SuperStructureConstants.ArmId);
+    _angleCANcoder = new CANcoder(SuperStructureConstants.ArmEncoderId);
     position = _angleMotorK.getPosition();
     velocity = _angleMotorK.getVelocity();
     voltage = _angleMotorK.getMotorVoltage();
     supplyCurrentAmps = _angleMotorK.getSupplyCurrent();
     torqueCurrentAmps = _angleMotorK.getTorqueCurrent();
     tempCelsius = _angleMotorK.getDeviceTemp();
+    absolutePosition = _angleCANcoder.getAbsolutePosition();
+    absoluteVelocity = _angleCANcoder.getVelocity();
 
     TalonFXConfiguration cfg = new TalonFXConfiguration();
     // spotless:off
@@ -55,7 +61,7 @@ public class ArmTalonFx implements ArmIO {
     cfg.CurrentLimits
         .withSupplyCurrentLimitEnable(true)
         .withSupplyCurrentLimit(40);
-    cfg.ClosedLoopGeneral.ContinuousWrap = false;
+    cfg.ClosedLoopGeneral.ContinuousWrap = true; //true = knows when it reaches 360, it is 0
     cfg.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.1;
     cfg.Slot0.kP = SuperStructureConstants.AngleP;
     cfg.Slot0.kI = SuperStructureConstants.AngleI;
@@ -64,40 +70,55 @@ public class ArmTalonFx implements ArmIO {
     cfg.Slot0.kV = SuperStructureConstants.AngleV;
     cfg.Slot0.kS = SuperStructureConstants.AngleS;
     cfg.Slot0.kA = SuperStructureConstants.AngleA;
-    cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
     cfg.SoftwareLimitSwitch.ForwardSoftLimitThreshold = SuperStructureConstants.angleSoftLimitHigh;
-    cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
     cfg.SoftwareLimitSwitch.ReverseSoftLimitThreshold = SuperStructureConstants.angleSoftLimitLow;
     cfg.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
-    cfg.Feedback.SensorToMechanismRatio = SuperStructureConstants.angleGearRatio;
-    cfg.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+    cfg.Feedback.SensorToMechanismRatio = 1;
+    cfg.Feedback.RotorToSensorRatio = SuperStructureConstants.angleGearRatio;
+    cfg.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+    cfg.Feedback.FeedbackRemoteSensorID = _angleCANcoder.getDeviceID(); //connecting CAN to motor
     // voltage limits
     cfg.Voltage.PeakForwardVoltage = SuperStructureConstants.anglePeakVoltage;
     cfg.Voltage.PeakReverseVoltage = -SuperStructureConstants.anglePeakVoltage;
     // spotless:on
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-        50, position, velocity, voltage, supplyCurrentAmps, torqueCurrentAmps, tempCelsius);
+        50,
+        position,
+        velocity,
+        voltage,
+        supplyCurrentAmps,
+        torqueCurrentAmps,
+        tempCelsius,
+        absolutePosition,
+        absoluteVelocity);
     _angleMotorK.optimizeBusUtilization(0.0, 1.0);
+    _angleCANcoder.optimizeBusUtilization(0.0, 1.0);
 
     _angleMotorK.getConfigurator().apply(cfg);
   }
 
   @Override
   public void setAngle(double angle) {
-    double goTo;
+    double goToAngleRotations;
     if ((angle * 360 < SuperStructureConstants.PrepAngle
             && _angleMotorK.getPosition().getValueAsDouble() * 360
                 > SuperStructureConstants.PrepAngle + 2)
         || (angle * 360 > SuperStructureConstants.PrepAngle
-            && _angleMotorK.getPosition().getValueAsDouble()
+            && _angleMotorK.getPosition().getValueAsDouble() * 360
                 < SuperStructureConstants.PrepAngle
-                    - 2)) { // protect against rotating the short way
-      goTo = SuperStructureConstants.PrepAngle;
+                    - 2)) { // protect against rotating under into the wall
+      goToAngleRotations =
+          Units.degreesToRotations(
+              SuperStructureConstants
+                  .PrepAngle); // if arm is arm below 90, go to 90. if arm is arm above 90, go to
+      // 90.
     } else {
-      goTo = angle;
+      goToAngleRotations = angle;
     }
-    _angleMotorK.setControl(positonOut.withPosition(goTo).withSlot(0));
+    _angleMotorK.setControl(positonOut.withPosition(goToAngleRotations).withSlot(0));
   }
 
   @Override
@@ -115,7 +136,14 @@ public class ArmTalonFx implements ArmIO {
 
     inputs.connected =
         BaseStatusSignal.refreshAll(
-                position, velocity, voltage, supplyCurrentAmps, torqueCurrentAmps, tempCelsius)
+                position,
+                velocity,
+                voltage,
+                supplyCurrentAmps,
+                torqueCurrentAmps,
+                tempCelsius,
+                absolutePosition,
+                absoluteVelocity)
             .isOK();
 
     inputs.positionAngle = Units.rotationsToDegrees(position.getValueAsDouble());
@@ -124,7 +152,8 @@ public class ArmTalonFx implements ArmIO {
     inputs.appliedVoltage = voltage.getValueAsDouble();
     inputs.supplyCurrentAmps = supplyCurrentAmps.getValueAsDouble();
     inputs.torqueCurrentAmps = torqueCurrentAmps.getValueAsDouble();
-    inputs.temperatureCelsius = tempCelsius.getValueAsDouble();
+    inputs.temperatureCelsius =
+        tempCelsius.getValueAsDouble(); // dont add absolute position or coder stuff
   }
   // TODO add Input logging
 }

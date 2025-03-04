@@ -59,6 +59,7 @@ public class SuperStructure {
     Logger.recordOutput("Arm/Extension/taget", extendDistance);
     Logger.recordOutput("Arm/Extension/pose", extensionPose);
     Logger.recordOutput("Arm/Pivot/pose", armPose);
+    Logger.recordOutput("Arm/Pivot/AtTarget", arm.atTarget()); // logs target in advantagescope
   }
 
   /**
