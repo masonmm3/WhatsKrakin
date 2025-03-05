@@ -9,7 +9,7 @@ public class Climb {
   // Gear Ratio 180/1
 
   private ClimbIO io;
-  private ClimbIOInputs inputs = new ClimbIOInputsAutoLogged(); /*updates IO inputs
+  private ClimbIOInputsAutoLogged inputs = new ClimbIOInputsAutoLogged(); /*updates IO inputs
  /* and creates a place to update them */
   private double angle;
 
@@ -19,7 +19,8 @@ public class Climb {
 
   public void climbPeriodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("Climb", (LoggableInputs)inputs);//Kept telling me to put "Loggable inputs"
+    Logger.processInputs(
+        "Climb", inputs); // Kept telling me to put "Loggable inputs"
     // this error should clear up once the robot is deployed on the code right?
     // Because it isn't letting me build :P at home
   }
