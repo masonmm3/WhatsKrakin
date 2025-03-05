@@ -19,7 +19,9 @@ public class Climb {
 
   public void climbPeriodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("Climb", (LoggableInputs) inputs);
+    Logger.processInputs("Climb", inputs);
+    //this error should clear up once the robot is deployed on the code right?
+    //Because it isn't letting me build :P at home
   }
 
   public void setClimbPosition(Rotation2d angleClimb) {
