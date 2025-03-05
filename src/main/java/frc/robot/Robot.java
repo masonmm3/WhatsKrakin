@@ -170,7 +170,10 @@ public class Robot extends LoggedRobot {
         RobotContainer.io.getDrRTrigger(),
         RobotContainer.io.getDrLt(),
         RobotContainer.io.getOPLB(),
-        RobotContainer.io.getOpRB());
+        RobotContainer.io.getOpRB(),
+        RobotContainer.io.getDrRb(),
+        RobotContainer.io.getDrAbutton(),
+        RobotContainer.io.getDrLeftBumper());
   }
 
   /** This function is called once when test mode is enabled. */

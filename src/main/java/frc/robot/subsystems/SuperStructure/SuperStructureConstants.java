@@ -18,20 +18,30 @@ public final class SuperStructureConstants {
     public static String Home = "Home";
   }
 
+  public class otherSequence {
+    public static String PrepareClimb = "Prepared climb";
+    public static String Climbing = "Climbing";
+    public static String ClimbHome = "Climb Home";
+  }
+
   // Constants
   public static int ArmId = 21;
   public static int ArmEncoderId = 22;
   public static int ExtensionId = 20;
   public static int ExtensionEncoderID = 23;
+  public static int ClimbId = 24;
 
   public static boolean ArmInvert = false;
   public static boolean ExtensionInvert = true;
+  public static boolean ClimbInvert = false; // Needs to change possibly
 
   public static double anglePeakVoltage = 4;
   public static double extensionPeakVoltage = 6;
+  public static double climbPeakVoltage = 6;
 
   public static double HomeAngle = -73.5; // -73.5
   public static double HomeExtend = 0; // 21.5
+  public static double HomeClimb = 0; // Maybe add (Might need to change)
 
   // 12 inches from reef for our set points
 
@@ -48,6 +58,7 @@ public final class SuperStructureConstants {
 
   public static double PrepAngle = 90; // should be straight up. (NEEDS TO BE STRAIGHT UP)
   public static double PrepExtend = 0.2;
+  public static double PrepClimb = 0;
 
   public static double CollectPrepAngle = -73.5;
   public static double CollectPrepExtend = 21.5;
@@ -57,6 +68,7 @@ public final class SuperStructureConstants {
 
   public static double scoreAngleDrop = -12;
   public static double scoreExtendDrop = -7;
+  public static double doClimb = 0;
 
   // closed loop
   public static double AngleP = 25; // 25
@@ -77,7 +89,18 @@ public final class SuperStructureConstants {
   public static double ExtensionV = 0;
   public static double ExtensionA = 0;
   public static double ExtensionG = 0;
-  public static double ExtensionSoftLimitLow = 9 / (2 * Math.PI * 2);
-  public static double ExtensionSoftLimitHigh = 40 / (2 * Math.PI * 2);
-  public static double ExtensionGearRatio = 80 / 12;
+  public static double extensionSoftLimitLow = 9 / (2 * Math.PI * 2);
+  public static double extensionSoftLimitHigh = 40 / (2 * Math.PI * 2);
+  public static double extensionGearRatio = 80 / 12;
+
+  public static double ClimbP = 0;
+  public static double ClimbI = 0;
+  public static double ClimbD = 0;
+  public static double ClimbS = 0;
+  public static double ClimbV = 0;
+  public static double ClimbA = 0;
+  public static double ClimbG = 0;
+  public static double climbSoftLimitLow = 0; // Change
+  public static double climbSoftLimitHigh = 0; // Change
+  public static double climbGearRatio = 180 / 1; // Gear Ratio 180/1
 }

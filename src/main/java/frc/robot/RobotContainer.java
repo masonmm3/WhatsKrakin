@@ -32,6 +32,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.SuperStructure.Arm.Arm;
 import frc.robot.subsystems.SuperStructure.Arm.ArmSim;
 import frc.robot.subsystems.SuperStructure.Arm.ArmTalonFx;
+import frc.robot.subsystems.SuperStructure.Climb.Climb;
 import frc.robot.subsystems.SuperStructure.Extension.Extension;
 import frc.robot.subsystems.SuperStructure.Extension.ExtensionSim;
 import frc.robot.subsystems.SuperStructure.Extension.ExtensionTalonFx;
@@ -65,6 +66,7 @@ public class RobotContainer {
   public static IO io = new IO(); // creates a version of IO
   public static Extension extension;
   public static Arm arm;
+  public static Climb climb;
   public static SuperStructure superStructure;
 
   // Controller
@@ -102,7 +104,7 @@ public class RobotContainer {
                 );
         arm = new Arm(new ArmTalonFx());
         extension = new Extension(new ExtensionTalonFx());
-        superStructure = new SuperStructure(arm, extension);
+        superStructure = new SuperStructure(arm, extension, climb);
 
         break;
 
@@ -126,7 +128,7 @@ public class RobotContainer {
                 );
         arm = new Arm(new ArmSim());
         extension = new Extension(new ExtensionSim());
-        superStructure = new SuperStructure(arm, extension);
+        superStructure = new SuperStructure(arm, extension, climb);
         break;
 
       default:
@@ -140,7 +142,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
-        superStructure = new SuperStructure(null, null);
+        superStructure = new SuperStructure(null, null, null);
         break;
     }
 

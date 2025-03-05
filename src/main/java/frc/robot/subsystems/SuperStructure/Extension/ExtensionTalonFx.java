@@ -72,12 +72,12 @@ public class ExtensionTalonFx implements ExtensionIO {
     cfg.Slot0.kS = SuperStructureConstants.ExtensionS;
     cfg.Slot0.kA = SuperStructureConstants.ExtensionA;
     cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
-    cfg.SoftwareLimitSwitch.ForwardSoftLimitThreshold = SuperStructureConstants.ExtensionSoftLimitHigh;
+    cfg.SoftwareLimitSwitch.ForwardSoftLimitThreshold = SuperStructureConstants.extensionSoftLimitHigh;
     cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
-    cfg.SoftwareLimitSwitch.ReverseSoftLimitThreshold = SuperStructureConstants.ExtensionSoftLimitLow;
+    cfg.SoftwareLimitSwitch.ReverseSoftLimitThreshold = SuperStructureConstants.extensionSoftLimitLow;
     cfg.Slot0.GravityType = GravityTypeValue.Elevator_Static;
     cfg.Feedback.SensorToMechanismRatio = 1; 
-    cfg.Feedback.RotorToSensorRatio = SuperStructureConstants.ExtensionGearRatio;
+    cfg.Feedback.RotorToSensorRatio = SuperStructureConstants.extensionGearRatio;
     cfg.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     cfg.Feedback.FeedbackRemoteSensorID = _extendCANcoder.getDeviceID(); //Add this when adding an EnCoder gives it its ID
     

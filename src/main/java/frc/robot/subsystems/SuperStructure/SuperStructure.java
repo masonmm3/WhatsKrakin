@@ -9,7 +9,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.subsystems.SuperStructure.Arm.Arm;
+import frc.robot.subsystems.SuperStructure.Climb.Climb;
 import frc.robot.subsystems.SuperStructure.Extension.Extension;
+import frc.robot.subsystems.SuperStructure.SuperStructureConstants.otherSequence;
 import frc.robot.subsystems.SuperStructure.SuperStructureConstants.sequence;
 import org.littletonrobotics.junction.Logger;
 
@@ -18,28 +20,36 @@ public class SuperStructure {
   private Arm arm; // gets arm class as variable and allows for use of arm functions
   private Extension
       extension; // gets extend class as variable and allows for use of extend functions
+  private Climb climb;
 
+  private double climbAngle;
   private double armAngle; // arm angle number
   private double extendDistance; // extend distance number
+  private String climbPose;
   private String lastPose; // adds a string(a sequence of characters)
   public Pose3d extensionPose =
       new Pose3d(); // creates a pose in 3D by using all the axis (x, y, z) and calculates it
   public Pose3d armPose = new Pose3d(); //
 
-  public SuperStructure(Arm arm, Extension extension) {
+  public SuperStructure(Arm arm, Extension extension, Climb climb) {
     this.arm = arm; // tells arm that it is arm and allows it to be modified
     this.extension = extension;
+    this.climb = climb;
 
+    climbPose = otherSequence.ClimbHome;
     lastPose = sequence.Home; // Makes it go to home no matter the last pose
     armAngle = 0; // logs the arm angle
     extendDistance = 0; // logs the extend distance
+    climbAngle = 0; // logs climb angle
   }
 
   /** updates superstructue values periodically */
   public void structPeriodic() {
     arm.armPeriodic();
     extension.extensionPeriodic();
+    climb.climbPeriodic();
 
+    // Im guessing these are SIM
     extensionPose =
         new Pose3d(
             Units.inchesToMeters(-extension.getExtinsion() * arm.getAngle().getCos())
@@ -61,6 +71,8 @@ public class SuperStructure {
     Logger.recordOutput("Arm/Extension/pose", extensionPose);
     Logger.recordOutput("Arm/Pivot/pose", armPose);
     Logger.recordOutput("Arm/Pivot/AtTarget", arm.atTarget()); // logs target in advantagescope
+    Logger.recordOutput("Climb/ClimbPose", climbPose);
+    Logger.recordOutput("Climb/Climb", climbAngle);
   }
 
   /**
@@ -121,7 +133,10 @@ public class SuperStructure {
       boolean drRt,
       double drLt,
       boolean opLb,
-      boolean opRb) {
+      boolean opRb,
+      boolean DrRb,
+      boolean DrLb,
+      boolean DrA) {
 
     if ((opLb && opRb)) { // force end sequnce
       // sets position using constants
@@ -244,10 +259,31 @@ public class SuperStructure {
       extendDistance = SuperStructureConstants.HomeExtend;
       // sequence holder
       lastPose = sequence.Home;
+    } else if (lastPose == sequence.Home && DrRb) {
+      // go to set position in constants or prepares for climb
+      climbAngle = SuperStructureConstants.PrepClimb;
+
+      // sequence holder for climb
+      climbPose = otherSequence.PrepareClimb;
+    } else if (lastPose == sequence.Home && DrLb) {
+      // go to set position in constants and does climb
+      climbAngle = SuperStructureConstants.doClimb;
+
+      // sequence holder for climb
+      climbPose = otherSequence.Climbing;
+    } else if (DrA) {
+      // go to set position in constants and homes climb if accidentally pressed
+      /*Do you think this is necessary? and should I try to add it on the Operator
+       *Temporarily because the arm is having Mechanical issues and I dont think we're
+       *using it*/
+      climbAngle = SuperStructureConstants.HomeClimb;
+
+      // sequence holder for climb
+      climbPose = otherSequence.ClimbHome;
     }
 
     arm.setPosition(new Rotation2d(Units.degreesToRadians(armAngle)));
-
+    climb.setClimbPosition(new Rotation2d(Units.degreesToRadians(climbAngle)));
     extension.extendToDistance(extendDistance);
   }
 
@@ -260,6 +296,11 @@ public class SuperStructure {
     extension.extendToDistance(extend);
     extendDistance = extend;
   }
+
+  // public void setClimb(double angle){
+  //   climb.setClimbPosition(angle);
+  //   climbAngle = angle;
+  // }
 
   public boolean atSetpoint() {
     return arm.atTarget() && extension.atExtension();

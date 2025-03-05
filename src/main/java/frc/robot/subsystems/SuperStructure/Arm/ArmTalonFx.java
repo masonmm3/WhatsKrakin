@@ -29,6 +29,7 @@ public class ArmTalonFx implements ArmIO {
 
   private final TalonFX _angleMotorK;
   private final CANcoder _angleCANcoder;
+
   private final StatusSignal<Angle> absolutePosition;
   private final StatusSignal<AngularVelocity> absoluteVelocity;
   private final StatusSignal<Angle> position;
@@ -63,7 +64,7 @@ public class ArmTalonFx implements ArmIO {
         .withSupplyCurrentLimit(40);
     cfg.ClosedLoopGeneral.ContinuousWrap = true; //true = knows when it reaches 360, it is 0
     cfg.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.1;
-    cfg.Slot0.kP = SuperStructureConstants.AngleP;
+    cfg.Slot0.kP =  SuperStructureConstants.AngleP;
     cfg.Slot0.kI = SuperStructureConstants.AngleI;
     cfg.Slot0.kD = SuperStructureConstants.AngleD;
     cfg.Slot0.kG = SuperStructureConstants.AngleG;
