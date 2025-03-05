@@ -18,6 +18,7 @@ public class SuperStructure {
   private Arm arm; // gets arm class as variable and allows for use of arm functions
   private Extension
       extension; // gets extend class as variable and allows for use of extend functions
+
   private double armAngle; // arm angle number
   private double extendDistance; // extend distance number
   private String lastPose; // adds a string(a sequence of characters)
@@ -232,6 +233,7 @@ public class SuperStructure {
       // sets position using constants
       armAngle = SuperStructureConstants.L4Angle;
       extendDistance = SuperStructureConstants.L4Extend;
+
       // sequence holder
       lastPose = sequence.Prep;
     }

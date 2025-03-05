@@ -31,6 +31,8 @@ public interface ArmIO {
 
   public default void runVolts(double volts) {}
 
+  public default void toggleBrake(boolean brakeMode) {}
+
   /**
    * gives current angle of actual arm
    *

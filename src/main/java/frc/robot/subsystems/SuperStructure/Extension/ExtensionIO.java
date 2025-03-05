@@ -15,6 +15,7 @@ public interface ExtensionIO {
 
     public double positionInch = 0.0;
     public double velocityRPM = 0.0;
+    public double positionExtensionRotation = 0.0;
 
     public double appliedVoltage = 0.0;
     public double supplyCurrentAmps = 0.0;

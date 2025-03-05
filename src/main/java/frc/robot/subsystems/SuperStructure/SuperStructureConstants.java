@@ -28,51 +28,53 @@ public final class SuperStructureConstants {
   public static boolean ExtensionInvert = true;
 
   public static double anglePeakVoltage = 4;
-  public static double extensionPeakVoltage = 1;
+  public static double extensionPeakVoltage = 6;
+
+  public static double HomeAngle = -73.5; // -73.5
+  public static double HomeExtend = 0; // 21.5
+
+  // 12 inches from reef for our set points
 
   // Setpoints PLEASE USE POSITIVE NUMBERS -90 = 270
-  public static double L4Extend = -10;
-  public static double L3Extend = 0;
-  public static double L2Extend = 0;
-  public static double L1Extend = 0;
+  public static double L4Extend = -21.7;
+  public static double L3Extend = 21.4;
+  public static double L2Extend = 26.4;
+  public static double L1Extend = HomeExtend;
 
-  public static double L4Angle = 95;
-  public static double L3Angle = 0;
-  public static double L2Angle = 0;
-  public static double L1Angle = 0;
+  public static double L4Angle = 106;
+  public static double L3Angle = 126;
+  public static double L2Angle = 161.5;
+  public static double L1Angle = HomeAngle;
 
   public static double PrepAngle = 90; // should be straight up. (NEEDS TO BE STRAIGHT UP)
-  public static double PrepExtend = -7;
+  public static double PrepExtend = 0.2;
 
-  public static double CollectPrepAngle = -70;
-  public static double CollectPrepExtend = -10;
+  public static double CollectPrepAngle = -73.5;
+  public static double CollectPrepExtend = 21.5;
 
-  public static double CollectAngle = -70;
-  public static double CollectExtend = -6;
+  public static double CollectAngle = -72.5;
+  public static double CollectExtend = 15.4;
 
   public static double scoreAngleDrop = -12;
   public static double scoreExtendDrop = -7;
 
-  public static double HomeAngle = -70;
-  public static double HomeExtend = -7;
-
   // closed loop
-  public static double AngleP = 40;
+  public static double AngleP = 25; // 25
   public static double AngleI = 0;
-  public static double AngleD = 0;
-  public static double AngleS = 0.1;
-  public static double AngleV = 0.3;
+  public static double AngleD = 3; // 3
+  public static double AngleS = 0;
+  public static double AngleV = 0;
   public static double AngleA = 0;
-  public static double AngleG = 0;
+  public static double AngleG = 1.28;
   public static double angleSoftLimitLow = -90;
   public static double angleSoftLimitHigh = 270;
   public static double angleGearRatio = 84 / 12;
 
-  public static double ExtensionP = 20;
-  public static double ExtensionI = 0;
+  public static double ExtensionP = 8.5; // 10
+  public static double ExtensionI = 5; // 5
   public static double ExtensionD = 0;
-  public static double ExtensionS = 0.01;
-  public static double ExtensionV = 0.1;
+  public static double ExtensionS = 0;
+  public static double ExtensionV = 0;
   public static double ExtensionA = 0;
   public static double ExtensionG = 0;
   public static double ExtensionSoftLimitLow = 9 / (2 * Math.PI * 2);

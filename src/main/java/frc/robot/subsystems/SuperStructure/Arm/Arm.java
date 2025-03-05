@@ -21,6 +21,7 @@ public class Arm {
   public void armPeriodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Arm/Pivot", inputs);
+    io.toggleBrake(atTarget()); // calls the atTarget function in Brake mode void
   }
 
   public void setPosition(Rotation2d Angle) {

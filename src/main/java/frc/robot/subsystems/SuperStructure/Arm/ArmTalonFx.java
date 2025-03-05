@@ -57,7 +57,7 @@ public class ArmTalonFx implements ArmIO {
     // spotless:off
     cfg.MotorOutput
         .withInverted(SuperStructureConstants.ArmInvert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive)
-        .withNeutralMode(NeutralModeValue.Coast);
+        .withNeutralMode(NeutralModeValue.Brake);
     cfg.CurrentLimits
         .withSupplyCurrentLimitEnable(true)
         .withSupplyCurrentLimit(40);
@@ -129,6 +129,10 @@ public class ArmTalonFx implements ArmIO {
   @Override
   public void runVolts(double volts) {
     _angleMotorK.setControl(voltageOut.withOutput(volts));
+  }
+
+  public void toggleBrake(boolean brakeMode) {
+    _angleMotorK.setNeutralMode(brakeMode ? NeutralModeValue.Brake : NeutralModeValue.Coast);
   }
 
   @Override
