@@ -63,10 +63,10 @@ public class ClimbTalonFX implements ClimbIO {
     cfg.SoftwareLimitSwitch.ForwardSoftLimitThreshold = SuperStructureConstants.climbSoftLimitHigh;
     cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     cfg.SoftwareLimitSwitch.ReverseSoftLimitThreshold = SuperStructureConstants.climbSoftLimitLow;
-    cfg.Slot0.GravityType = GravityTypeValue.Arm_Cosine; // Is this correct?
-    cfg.Feedback.SensorToMechanismRatio = 1; // Maybe needs to change
+    cfg.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
+    cfg.Feedback.SensorToMechanismRatio = 1; // Does not do anything when using a remote can coder
     cfg.Feedback.RotorToSensorRatio = SuperStructureConstants.climbGearRatio;
-    cfg.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    cfg.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder; 
 
     cfg.Voltage.PeakForwardVoltage = SuperStructureConstants.climbPeakVoltage;
     cfg.Voltage.PeakReverseVoltage = -SuperStructureConstants.climbPeakVoltage;
@@ -80,9 +80,8 @@ public class ClimbTalonFX implements ClimbIO {
 
   @Override
   public void setClimb(double angleClimb) {
-    double climbAngle = angleClimb * 360;
-    _climbMotorK.setControl(positionOut.withPosition(climbAngle).withSlot(0));
-  } // I think this is necessary to get it in angles but I'm not entirely sure
+    _climbMotorK.setControl(positionOut.withPosition(angleClimb).withSlot(0));
+  } // your target should be in rotatiosn
 
   @Override
   public void runVolts(double volts) {
