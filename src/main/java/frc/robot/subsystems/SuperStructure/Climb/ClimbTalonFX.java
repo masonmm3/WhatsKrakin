@@ -52,21 +52,21 @@ public class ClimbTalonFX implements ClimbIO {
     cfg.CurrentLimits.withStatorCurrentLimitEnable(true).withSupplyCurrentLimit(40);
     cfg.ClosedLoopGeneral.ContinuousWrap = false;
     cfg.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.1;
-    cfg.Slot0.kP = SuperStructureConstants.ClimbA;
+    cfg.Slot0.kP = SuperStructureConstants.ClimbP;
     cfg.Slot0.kI = SuperStructureConstants.ClimbI;
     cfg.Slot0.kD = SuperStructureConstants.ClimbD;
     cfg.Slot0.kG = SuperStructureConstants.ClimbG;
     cfg.Slot0.kV = SuperStructureConstants.ClimbV;
     cfg.Slot0.kS = SuperStructureConstants.ClimbS;
     cfg.Slot0.kA = SuperStructureConstants.ClimbA;
-    cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
     cfg.SoftwareLimitSwitch.ForwardSoftLimitThreshold = SuperStructureConstants.climbSoftLimitHigh;
-    cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
     cfg.SoftwareLimitSwitch.ReverseSoftLimitThreshold = SuperStructureConstants.climbSoftLimitLow;
     cfg.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
     cfg.Feedback.SensorToMechanismRatio = 1; // Does not do anything when using a remote can coder
     cfg.Feedback.RotorToSensorRatio = SuperStructureConstants.climbGearRatio;
-    cfg.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder; 
+    cfg.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
 
     cfg.Voltage.PeakForwardVoltage = SuperStructureConstants.climbPeakVoltage;
     cfg.Voltage.PeakReverseVoltage = -SuperStructureConstants.climbPeakVoltage;

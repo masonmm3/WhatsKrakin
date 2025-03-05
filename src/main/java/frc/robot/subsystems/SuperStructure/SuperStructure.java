@@ -25,6 +25,7 @@ public class SuperStructure {
   private double climbAngle;
   private double armAngle; // arm angle number
   private double extendDistance; // extend distance number
+  private double volts;
   private String climbPose;
   private String lastPose; // adds a string(a sequence of characters)
   public Pose3d extensionPose =
@@ -73,6 +74,7 @@ public class SuperStructure {
     Logger.recordOutput("Arm/Pivot/AtTarget", arm.atTarget()); // logs target in advantagescope
     Logger.recordOutput("Climb/ClimbPose", climbPose);
     Logger.recordOutput("Climb/Climb", climbAngle);
+    // climb.climbPeriodic(Volts);
   }
 
   /**
@@ -259,28 +261,27 @@ public class SuperStructure {
       extendDistance = SuperStructureConstants.HomeExtend;
       // sequence holder
       lastPose = sequence.Home;
-    } else if (lastPose == sequence.Home && DrRb) {
+    } else if (DrRb) {
       // go to set position in constants or prepares for climb
-      climbAngle = SuperStructureConstants.PrepClimb;
+      climb.runVolts(2);
 
       // sequence holder for climb
       climbPose = otherSequence.PrepareClimb;
-    } else if (lastPose == sequence.Home && DrLb) {
+    } else if (DrLb) {
       // go to set position in constants and does climb
-      climbAngle = SuperStructureConstants.doClimb;
+      // climbAngle = SuperStructureConstants.doClimb;
+      climb.runVolts(-2);
 
       // sequence holder for climb
       climbPose = otherSequence.Climbing;
-    } else if (DrA) {
-      // go to set position in constants and homes climb if accidentally pressed
-      /*Do you think this is necessary? and should I try to add it on the Operator
-       *Temporarily because the arm is having Mechanical issues and I dont think we're
-       *using it*/
-      climbAngle = SuperStructureConstants.HomeClimb;
-
-      // sequence holder for climb
-      climbPose = otherSequence.ClimbHome;
     }
+    // } else if (DrA) {
+
+    //   climbAngle = SuperStructureConstants.HomeClimb;
+
+    //   // sequence holder for climb
+    //   climbPose = otherSequence.ClimbHome;
+    // }
 
     arm.setPosition(new Rotation2d(Units.degreesToRadians(armAngle)));
     climb.setClimbPosition(new Rotation2d(Units.degreesToRadians(climbAngle)));
