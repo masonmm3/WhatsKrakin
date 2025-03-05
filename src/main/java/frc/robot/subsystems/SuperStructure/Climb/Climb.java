@@ -3,6 +3,7 @@ package frc.robot.subsystems.SuperStructure.Climb;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.subsystems.SuperStructure.Climb.ClimbIO.ClimbIOInputs;
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.inputs.LoggableInputs;
 
 public class Climb {
   // Gear Ratio 180/1
@@ -18,7 +19,7 @@ public class Climb {
 
   public void climbPeriodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("Climb", inputs);
+    Logger.processInputs("Climb", (LoggableInputs)inputs);//Kept telling me to put "Loggable inputs"
     // this error should clear up once the robot is deployed on the code right?
     // Because it isn't letting me build :P at home
   }
