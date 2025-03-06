@@ -17,7 +17,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.subsystems.SuperStructure.Climb.ClimbIO.ClimbIOInputs;
+// import frc.robot.subsystems.SuperStructure.Climb.ClimbIO.ClimbIOInputs;
 import frc.robot.subsystems.SuperStructure.SuperStructureConstants;
 
 public class ClimbTalonFX implements ClimbIO {
