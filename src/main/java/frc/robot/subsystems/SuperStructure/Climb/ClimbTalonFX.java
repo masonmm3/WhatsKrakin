@@ -71,6 +71,8 @@ public class ClimbTalonFX implements ClimbIO {
     cfg.Voltage.PeakForwardVoltage = SuperStructureConstants.climbPeakVoltage;
     cfg.Voltage.PeakReverseVoltage = -SuperStructureConstants.climbPeakVoltage;
 
+    _climbMotorK.setPosition(0);
+
     BaseStatusSignal.setUpdateFrequencyForAll(
         50, position, velocity, voltage, supplyCurrentAmps, torqueCurrentAmps, tempCelsius);
     _climbMotorK.optimizeBusUtilization(0.0, 1.0);
