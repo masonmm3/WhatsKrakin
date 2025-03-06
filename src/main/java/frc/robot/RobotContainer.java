@@ -33,6 +33,7 @@ import frc.robot.subsystems.SuperStructure.Arm.Arm;
 import frc.robot.subsystems.SuperStructure.Arm.ArmSim;
 import frc.robot.subsystems.SuperStructure.Arm.ArmTalonFx;
 import frc.robot.subsystems.SuperStructure.Climb.Climb;
+import frc.robot.subsystems.SuperStructure.Climb.ClimbTalonFX;
 import frc.robot.subsystems.SuperStructure.Extension.Extension;
 import frc.robot.subsystems.SuperStructure.Extension.ExtensionSim;
 import frc.robot.subsystems.SuperStructure.Extension.ExtensionTalonFx;
@@ -104,6 +105,7 @@ public class RobotContainer {
                 );
         arm = new Arm(new ArmTalonFx());
         extension = new Extension(new ExtensionTalonFx());
+        climb = new Climb(new ClimbTalonFX());
         superStructure = new SuperStructure(arm, extension, climb);
 
         break;

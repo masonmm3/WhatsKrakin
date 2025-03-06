@@ -25,7 +25,6 @@ public class SuperStructure {
   private double climbAngle;
   private double armAngle; // arm angle number
   private double extendDistance; // extend distance number
-  private double volts;
   private String climbPose;
   private String lastPose; // adds a string(a sequence of characters)
   public Pose3d extensionPose =
@@ -136,9 +135,22 @@ public class SuperStructure {
       double drLt,
       boolean opLb,
       boolean opRb,
+      boolean DrY,
       boolean DrRb,
       boolean DrLb,
-      boolean DrA) {
+      boolean DrA
+      // boolean opA,
+      // boolean opB,
+      // boolean opY,
+      // boolean opX,
+      // boolean drRt,
+      // double drLt,
+      // boolean opLb,
+      // boolean opRb,
+      // boolean DrRb,
+      // boolean DrLb,
+      // boolean DrA
+      ) {
 
     if ((opLb && opRb)) { // force end sequnce
       // sets position using constants
@@ -261,7 +273,7 @@ public class SuperStructure {
       extendDistance = SuperStructureConstants.HomeExtend;
       // sequence holder
       lastPose = sequence.Home;
-    } else if (DrRb) {
+    } else if (DrA) {
       // go to set position in constants or prepares for climb
       climb.runVolts(2);
 
