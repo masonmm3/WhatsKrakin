@@ -130,7 +130,8 @@ public class RobotContainer {
                 );
         arm = new Arm(new ArmSim());
         extension = new Extension(new ExtensionSim());
-        superStructure = new SuperStructure(arm, extension, null);
+        climb = new Climb(new ClimbTalonFX());
+        superStructure = new SuperStructure(arm, extension, climb);
         break;
 
       default:
