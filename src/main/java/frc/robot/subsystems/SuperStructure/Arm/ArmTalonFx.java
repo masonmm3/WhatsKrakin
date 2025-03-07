@@ -6,13 +6,11 @@ package frc.robot.subsystems.SuperStructure.Arm;
 
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -20,7 +18,6 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -46,7 +43,7 @@ public class ArmTalonFx implements ArmIO {
   private final StatusSignal<Current> torqueCurrentAmps;
   private final StatusSignal<Temperature> tempCelsius;
 
- private final MotionMagicVoltage mmVolts = new MotionMagicVoltage(0).withSlot(0);
+  private final MotionMagicVoltage mmVolts = new MotionMagicVoltage(0).withSlot(0);
 
   private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
 
@@ -114,23 +111,23 @@ public class ArmTalonFx implements ArmIO {
 
   @Override
   public void setAngle(double angle) {
-    if ((angle * 360 < SuperStructureConstants.PrepAngle
-            && _angleMotorK.getPosition().getValueAsDouble() * 360
-                > SuperStructureConstants.PrepAngle + 2)
-        || (angle * 360 > SuperStructureConstants.PrepAngle
-            && _angleMotorK.getPosition().getValueAsDouble() * 360
-                < SuperStructureConstants.PrepAngle
-                    - 2)) { // protect against rotating under into the wall
-      setPointAngleRotations =
-          Units.degreesToRotations(
-              SuperStructureConstants
-                  .PrepAngle); // if arm is arm below 90, go to 90. if arm is arm above 90, go to
-      // 90.
-    } else {
-      setPointAngleRotations = angle;
-    }
-    _angleMotorK.setControl(
-        mmVolts.withPosition(setPointAngleRotations));
+    // double setPointAngleRotations;
+    // if ((angle * 360 < SuperStructureConstants.PrepAngle
+    //         && _angleMotorK.getPosition().getValueAsDouble() * 360
+    //             > SuperStructureConstants.PrepAngle + 2)
+    //     || (angle * 360 > SuperStructureConstants.PrepAngle
+    //         && _angleMotorK.getPosition().getValueAsDouble() * 360
+    //             < SuperStructureConstants.PrepAngle
+    //                 - 2)) { // protect against rotating under into the wall
+    //   setPointAngleRotations =
+    //       Units.degreesToRotations(
+    //           SuperStructureConstants
+    //               .PrepAngle); // if arm is arm below 90, go to 90. if arm is arm above 90, go to
+    //   // 90.
+    // } else {
+    //   setPointAngleRotations = angle;
+    // }
+    _angleMotorK.setControl(mmVolts.withPosition(Units.degreesToRotations(angle))) ;
   }
 
   @Override
