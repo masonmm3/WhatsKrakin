@@ -43,7 +43,7 @@ public class ArmTalonFx implements ArmIO {
   private final StatusSignal<Current> torqueCurrentAmps;
   private final StatusSignal<Temperature> tempCelsius;
 
-  private final MotionMagicVoltage mmVolts = new MotionMagicVoltage(0).withSlot(0);
+  private final MotionMagicVoltage mmVolts = new MotionMagicVoltage(0);
 
   private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
 
@@ -86,7 +86,7 @@ public class ArmTalonFx implements ArmIO {
     cfg.SoftwareLimitSwitch.ReverseSoftLimitThreshold = SuperStructureConstants.angleSoftLimitLow;
     cfg.Feedback.SensorToMechanismRatio = 1;
     cfg.Feedback.RotorToSensorRatio = SuperStructureConstants.angleGearRatio;
-    cfg.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+    cfg.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
     cfg.Feedback.FeedbackRemoteSensorID = _angleCANcoder.getDeviceID(); //connecting CAN to motor
     // voltage limits
     cfg.Voltage.PeakForwardVoltage = SuperStructureConstants.anglePeakVoltage;
