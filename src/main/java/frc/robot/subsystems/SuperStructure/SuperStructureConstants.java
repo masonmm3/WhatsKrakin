@@ -31,13 +31,13 @@ public final class SuperStructureConstants {
   public static int ExtensionEncoderID = 23;
   public static int ClimbId = 25;
 
-  public static boolean ArmInvert = false;
-  public static boolean ExtensionInvert = true;
+  public static boolean ArmInvert = true;
+  public static boolean ExtensionInvert = false;
   public static boolean ClimbInvert = false; // Needs to change possibly
 
-  public static double anglePeakVoltage = 4;
-  public static double extensionPeakVoltage = 6;
-  public static double climbPeakVoltage = 6;
+  public static double anglePeakVoltage = 3; // 4
+  public static double extensionPeakVoltage = 1; // 6
+  public static double climbPeakVoltage = 1;
 
   public static double HomeAngle = -73.5; // -73.5
   public static double HomeExtend = 0; // 21.5
@@ -60,14 +60,14 @@ public final class SuperStructureConstants {
   public static double PrepExtend = 0.2;
   public static double PrepClimb = 0;
 
-  public static double CollectPrepAngle = -73.5;
-  public static double CollectPrepExtend = 21.5;
+  public static double CollectPrepAngle = -0;
+  public static double CollectPrepExtend = 0;
 
-  public static double CollectAngle = -72.5;
-  public static double CollectExtend = 15.4;
+  public static double CollectAngle = 0;
+  public static double CollectExtend = 0;
 
-  public static double scoreAngleDrop = -12;
-  public static double scoreExtendDrop = -7;
+  public static double scoreAngleDrop = 0;
+  public static double scoreExtendDrop = 0;
   public static double doClimb = 0;
 
   // closed loop
@@ -80,7 +80,7 @@ public final class SuperStructureConstants {
   public static double AngleG = 0; // 1.2
   public static double angleSoftLimitLow = 0; // -90
   public static double angleSoftLimitHigh = 0; // 270
-  public static double angleGearRatio = 84 / 12;
+  public static double angleGearRatio = 63 / 36;
 
   public static double ExtensionP = 0; // 8.5
   public static double ExtensionI = 0; // 5
