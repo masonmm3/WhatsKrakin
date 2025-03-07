@@ -93,13 +93,13 @@ public final class SuperStructureConstants {
   public static double extensionSoftLimitHigh = 0; // 40 / (2 * Math.PI * 2
   public static double extensionGearRatio = 1 / 36;
 
-  public static double ClimbP = 0;
-  public static double ClimbI = 0;
-  public static double ClimbD = 0;
-  public static double ClimbS = 0;
-  public static double ClimbV = 0;
-  public static double ClimbA = 0;
-  public static double ClimbG = 0;
+  // public static double ClimbP = 0;
+  // public static double ClimbI = 0;
+  // public static double ClimbD = 0;
+  // public static double ClimbS = 0;
+  // public static double ClimbV = 0;
+  // public static double ClimbA = 0;
+  // public static double ClimbG = 0;
   public static double climbSoftLimitLow = 0; // Change
   public static double climbSoftLimitHigh = 0; // Change
   public static double climbGearRatio = 180 / 1; // Gear Ratio 180/1
