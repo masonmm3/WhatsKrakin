@@ -70,6 +70,8 @@ public final class SuperStructureConstants {
   public static double scoreExtendDrop = 0;
   public static double doClimb = 0;
 
+  public static double armCruiseVelocity = 5;
+  public static double armCruiseAcceleration = 5;
   // closed loop
   public static double AngleP = 0; //
   public static double AngleI = 0;
@@ -81,6 +83,11 @@ public final class SuperStructureConstants {
   public static double angleSoftLimitLow = 0; // -90
   public static double angleSoftLimitHigh = 0; // 270
   public static double angleGearRatio = 63;
+
+  public static double extendRotationsToInches = (2 * Math.PI * 2);
+
+  public static double extendCruiseVelocity = 5;
+  public static double extendCruiseAcceleration = 5;
 
   public static double ExtensionP = 0; // 8.5
   public static double ExtensionI = 0; // 5

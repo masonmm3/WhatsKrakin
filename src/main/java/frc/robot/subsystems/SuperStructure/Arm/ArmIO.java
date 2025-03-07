@@ -14,7 +14,7 @@ public interface ArmIO {
     public boolean connected = false;
 
     public double positionAngle = 0.0;
-    public double velocityRPM = 0.0;
+    public double velocityDegPerSec = 0.0;
     public double goToAngleDegrees = 0.0;
 
     public double appliedVoltage = 0.0;

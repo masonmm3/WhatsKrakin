@@ -4,9 +4,14 @@
 
 package frc.robot.subsystems.SuperStructure.Arm;
 
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -32,12 +37,6 @@ public class ArmTalonFx implements ArmIO {
   private final CANcoder _angleCANcoder;
   private double setPointAngleRotations = 0;
 
-  private final ArmFeedforward feedforward =
-      new ArmFeedforward(
-          SuperStructureConstants.AngleS,
-          SuperStructureConstants.AngleG,
-          SuperStructureConstants.AngleV);
-
   private final StatusSignal<Angle> absolutePosition;
   private final StatusSignal<AngularVelocity> absoluteVelocity;
   private final StatusSignal<Angle> position;
@@ -47,7 +46,8 @@ public class ArmTalonFx implements ArmIO {
   private final StatusSignal<Current> torqueCurrentAmps;
   private final StatusSignal<Temperature> tempCelsius;
 
-  private final PositionVoltage positonOut = new PositionVoltage(0).withSlot(0);
+ private final MotionMagicVoltage mmVolts = new MotionMagicVoltage(0).withSlot(0);
+
   private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
 
   public ArmTalonFx() {
@@ -72,13 +72,16 @@ public class ArmTalonFx implements ArmIO {
         .withSupplyCurrentLimit(40);
     cfg.ClosedLoopGeneral.ContinuousWrap = true; //true = knows when it reaches 360, it is 0
     cfg.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.1;
+    cfg.MotionMagic
+        .withMotionMagicCruiseVelocity(DegreesPerSecond.of(SuperStructureConstants.armCruiseVelocity))
+        .withMotionMagicAcceleration(DegreesPerSecondPerSecond.of(SuperStructureConstants.armCruiseAcceleration));
     cfg.Slot0.kP =  SuperStructureConstants.AngleP;
     cfg.Slot0.kI = SuperStructureConstants.AngleI;
     cfg.Slot0.kD = SuperStructureConstants.AngleD;
-    // cfg.Slot0.kG = SuperStructureConstants.AngleG;
-    // cfg.Slot0.kV = SuperStructureConstants.AngleV;
-    // cfg.Slot0.kS = SuperStructureConstants.AngleS;
-    // cfg.Slot0.kA = SuperStructureConstants.AngleA;
+    cfg.Slot0.kG = SuperStructureConstants.AngleG;
+    cfg.Slot0.kV = SuperStructureConstants.AngleV;
+    cfg.Slot0.kS = SuperStructureConstants.AngleS;
+    cfg.Slot0.kA = SuperStructureConstants.AngleA;
     cfg.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
     cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
     cfg.SoftwareLimitSwitch.ForwardSoftLimitThreshold = SuperStructureConstants.angleSoftLimitHigh;
@@ -111,11 +114,6 @@ public class ArmTalonFx implements ArmIO {
 
   @Override
   public void setAngle(double angle) {
-    double ff =
-        feedforward.calculate(
-            _angleMotorK.getPosition().getValueAsDouble(),
-            _angleMotorK.getVelocity().getValueAsDouble());
-
     if ((angle * 360 < SuperStructureConstants.PrepAngle
             && _angleMotorK.getPosition().getValueAsDouble() * 360
                 > SuperStructureConstants.PrepAngle + 2)
@@ -132,7 +130,7 @@ public class ArmTalonFx implements ArmIO {
       setPointAngleRotations = angle;
     }
     _angleMotorK.setControl(
-        positonOut.withPosition(setPointAngleRotations).withSlot(0).withFeedForward(ff));
+        mmVolts.withPosition(setPointAngleRotations));
   }
 
   @Override
@@ -164,7 +162,7 @@ public class ArmTalonFx implements ArmIO {
             .isOK();
 
     inputs.positionAngle = Units.rotationsToDegrees(position.getValueAsDouble());
-    inputs.velocityRPM = Units.radiansPerSecondToRotationsPerMinute(velocity.getValueAsDouble());
+    inputs.velocityDegPerSec = Units.rotationsToDegrees(velocity.getValueAsDouble());
     inputs.goToAngleDegrees = Units.rotationsToDegrees(setPointAngleRotations);
 
     inputs.appliedVoltage = voltage.getValueAsDouble();
@@ -172,11 +170,6 @@ public class ArmTalonFx implements ArmIO {
     inputs.torqueCurrentAmps = torqueCurrentAmps.getValueAsDouble();
     inputs.temperatureCelsius =
         tempCelsius.getValueAsDouble(); // dont add absolute position or coder stuff
-
-    positonOut.FeedForward =
-        feedforward.calculate(
-            _angleMotorK.getPosition().getValueAsDouble(),
-            _angleMotorK.getVelocity().getValueAsDouble());
     // TODO add Input logging
   }
 }

@@ -4,9 +4,17 @@
 
 package frc.robot.subsystems.SuperStructure.Extension;
 
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -38,7 +46,7 @@ public class ExtensionTalonFx implements ExtensionIO {
   private final StatusSignal<Angle> absolutePosition;
   private final StatusSignal<AngularVelocity> absoluteVelocity;
 
-  private final PositionVoltage positonOut = new PositionVoltage(0).withSlot(0);
+  private final MotionMagicVoltage mmVolts =  new MotionMagicVoltage(0).withSlot(0);
   private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
 
   public ExtensionTalonFx() {
@@ -64,6 +72,10 @@ public class ExtensionTalonFx implements ExtensionIO {
         .withSupplyCurrentLimit(40);
     cfg.ClosedLoopGeneral.ContinuousWrap = false;
     cfg.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.1;
+    cfg.MotionMagic.withMotionMagicCruiseVelocity(RotationsPerSecond
+      .of(SuperStructureConstants.extendCruiseVelocity * SuperStructureConstants.extendRotationsToInches))
+    .withMotionMagicAcceleration(RotationsPerSecondPerSecond
+      .of(SuperStructureConstants.extendCruiseAcceleration * SuperStructureConstants.extendRotationsToInches));
     cfg.Slot0.kP = SuperStructureConstants.ExtensionP;
     cfg.Slot0.kI = SuperStructureConstants.ExtensionI;
     cfg.Slot0.kD = SuperStructureConstants.ExtensionD;
@@ -105,8 +117,8 @@ public class ExtensionTalonFx implements ExtensionIO {
 
   @Override
   public void extendToDistance(double inch) {
-    double target = inch / (2 * Math.PI * 2);
-    _extendMotorK.setControl(positonOut.withPosition(target).withSlot(0));
+    double target = inch / SuperStructureConstants.extendRotationsToInches;
+    _extendMotorK.setControl(mmVolts.withPosition(target));
   }
 
   @Override
@@ -116,7 +128,7 @@ public class ExtensionTalonFx implements ExtensionIO {
 
   @Override
   public double getExtend() {
-    return _extendMotorK.getPosition().getValueAsDouble() * (2 * Math.PI * 2);
+    return _extendMotorK.getPosition().getValueAsDouble() * SuperStructureConstants.extendRotationsToInches;
   }
 
   @Override
@@ -133,7 +145,7 @@ public class ExtensionTalonFx implements ExtensionIO {
                 absoluteVelocity)
             .isOK();
 
-    inputs.positionInch = position.getValueAsDouble() * (2 * Math.PI * 2);
+    inputs.positionInch = position.getValueAsDouble() * SuperStructureConstants.extendRotationsToInches;
     inputs.positionExtensionRotation = position.getValueAsDouble();
     inputs.velocityRPM = Units.radiansPerSecondToRotationsPerMinute(velocity.getValueAsDouble());
 
