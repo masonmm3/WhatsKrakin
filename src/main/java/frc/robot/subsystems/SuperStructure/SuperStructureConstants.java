@@ -71,13 +71,13 @@ public final class SuperStructureConstants {
   public static double doClimb = 0;
 
   // closed loop
-  public static double AngleP = 0; // 25
+  public static double AngleP = 0; // 140
   public static double AngleI = 0;
   public static double AngleD = 0; // 3
   public static double AngleS = 0;
-  public static double AngleV = 0;
+  public static double AngleV = 0; //1.4
   public static double AngleA = 0;
-  public static double AngleG = 0; // 1.28
+  public static double AngleG = 0; // 1.2
   public static double angleSoftLimitLow = 0; // -90
   public static double angleSoftLimitHigh = 0; // 270
   public static double angleGearRatio = 84 / 12;

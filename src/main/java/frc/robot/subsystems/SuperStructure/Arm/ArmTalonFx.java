@@ -71,9 +71,9 @@ public class ArmTalonFx implements ArmIO {
     cfg.Slot0.kV = SuperStructureConstants.AngleV;
     cfg.Slot0.kS = SuperStructureConstants.AngleS;
     cfg.Slot0.kA = SuperStructureConstants.AngleA;
-    cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
+    cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     cfg.SoftwareLimitSwitch.ForwardSoftLimitThreshold = SuperStructureConstants.angleSoftLimitHigh;
-    cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
+    cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     cfg.SoftwareLimitSwitch.ReverseSoftLimitThreshold = SuperStructureConstants.angleSoftLimitLow;
     cfg.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
     cfg.Feedback.SensorToMechanismRatio = 1;
