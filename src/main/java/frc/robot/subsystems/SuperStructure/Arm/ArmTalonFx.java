@@ -104,13 +104,13 @@ public class ArmTalonFx implements ArmIO {
   @Override
   public void setAngle(double angle) {
     double goToAngleRotations;
-    if ((angle * 360 < SuperStructureConstants.PrepAngle
-            && _angleMotorK.getPosition().getValueAsDouble() * 360
-                > SuperStructureConstants.PrepAngle + 2)
-        || (angle * 360 > SuperStructureConstants.PrepAngle
-            && _angleMotorK.getPosition().getValueAsDouble() * 360
+    if ((angle * -360 < SuperStructureConstants.PrepAngle
+            && _angleMotorK.getPosition().getValueAsDouble() * -360
+                > SuperStructureConstants.PrepAngle - 2)
+        || (angle * -360 > SuperStructureConstants.PrepAngle
+            && _angleMotorK.getPosition().getValueAsDouble() * -360
                 < SuperStructureConstants.PrepAngle
-                    - 2)) { // protect against rotating under into the wall
+                    + 2)) { // protect against rotating under into the wall
       goToAngleRotations =
           Units.degreesToRotations(
               SuperStructureConstants

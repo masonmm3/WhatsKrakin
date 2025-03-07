@@ -80,7 +80,7 @@ public final class SuperStructureConstants {
   public static double AngleG = 0; // 1.2
   public static double angleSoftLimitLow = 0; // -90
   public static double angleSoftLimitHigh = 0; // 270
-  public static double angleGearRatio = 63 / 1;
+  public static double angleGearRatio = 1 / 63;
 
   public static double ExtensionP = 0; // 8.5
   public static double ExtensionI = 0; // 5
@@ -91,7 +91,7 @@ public final class SuperStructureConstants {
   public static double ExtensionG = 0;
   public static double extensionSoftLimitLow = 0; // 9 / (2 * Math.PI * 2)
   public static double extensionSoftLimitHigh = 0; // 40 / (2 * Math.PI * 2
-  public static double extensionGearRatio = 80 / 12;
+  public static double extensionGearRatio = 1 / 36;
 
   public static double ClimbP = 0;
   public static double ClimbI = 0;
