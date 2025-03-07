@@ -111,11 +111,7 @@ public class IO {
   }
 
   public boolean getDrRb() {
-    if (dr.getRightBumperPressed() || dr.getRightBumperReleased()) {
-      return true;
-    } else {
-      return false;
-    }
+    return dr.getRightBumper();
   }
 
   public boolean getDrAbutton() {

@@ -29,17 +29,17 @@ public final class SuperStructureConstants {
   public static int ArmEncoderId = 22;
   public static int ExtensionId = 20;
   public static int ExtensionEncoderID = 23;
-  public static int ClimbId = 25;
+  public static int ClimbId = 27;
 
-  public static boolean ArmInvert = true;
+  public static boolean ArmInvert = false;
   public static boolean ExtensionInvert = false;
   public static boolean ClimbInvert = false; // Needs to change possibly
 
-  public static double anglePeakVoltage = 3; // 4
+  public static double anglePeakVoltage = 6; // 4
   public static double extensionPeakVoltage = 1; // 6
-  public static double climbPeakVoltage = 1;
+  public static double climbPeakVoltage = 6;
 
-  public static double HomeAngle = -73.5; // -73.5
+  public static double HomeAngle = -72; // -73.5
   public static double HomeExtend = 0; // 21.5
   public static double HomeClimb = 0; // Maybe add (Might need to change)
 
@@ -71,16 +71,16 @@ public final class SuperStructureConstants {
   public static double doClimb = 0;
 
   // closed loop
-  public static double AngleP = 0; // 140
+  public static double AngleP = 0; //
   public static double AngleI = 0;
   public static double AngleD = 0; // 3
-  public static double AngleS = 0;
+  public static double AngleS = 1;
   public static double AngleV = 0; // 1.4
   public static double AngleA = 0;
-  public static double AngleG = 0; // 1.2
+  public static double AngleG = 0.07; // 1.2
   public static double angleSoftLimitLow = 0; // -90
   public static double angleSoftLimitHigh = 0; // 270
-  public static double angleGearRatio = 1 / 63;
+  public static double angleGearRatio = 63;
 
   public static double ExtensionP = 0; // 8.5
   public static double ExtensionI = 0; // 5
@@ -91,7 +91,7 @@ public final class SuperStructureConstants {
   public static double ExtensionG = 0;
   public static double extensionSoftLimitLow = 0; // 9 / (2 * Math.PI * 2)
   public static double extensionSoftLimitHigh = 0; // 40 / (2 * Math.PI * 2
-  public static double extensionGearRatio = 1 / 36;
+  public static double extensionGearRatio = 36;
 
   // public static double ClimbP = 0;
   // public static double ClimbI = 0;

@@ -151,6 +151,27 @@ public class SuperStructure {
       // boolean DrLb,
       // boolean DrA
       ) {
+    if (DrRb && climb.getClimb().getRotations() > -92) {
+      // go to set position in constants or prepares for climb
+      climb.runVolts(-12);
+
+      // sequence holder for climb
+      // climbPose = otherSequence.PrepareClimb;
+    } else if (DrLb && climb.getClimb().getRotations() > -150) {
+      // go to set position in constants and does climb
+      // climbAngle = SuperStructureConstants.doClimb;
+      climb.runVolts(-12);
+
+      // sequence holder for climb
+      // climbPose = otherSequence.Climbing;
+    }
+    // } else if (DrA) {
+
+    //   climbAngle = SuperStructureConstants.HomeClimb;
+
+    //   // sequence holder for climb
+    //   climbPose = otherSequence.ClimbHome;
+    // }
 
     if ((opLb && opRb)) { // force end sequnce
       // sets position using constants
@@ -273,30 +294,10 @@ public class SuperStructure {
       extendDistance = SuperStructureConstants.HomeExtend;
       // sequence holder
       lastPose = sequence.Home;
-    } else if (DrA) {
-      // go to set position in constants or prepares for climb
-      climb.runVolts(2);
-
-      // sequence holder for climb
-      climbPose = otherSequence.PrepareClimb;
-    } else if (DrLb) {
-      // go to set position in constants and does climb
-      // climbAngle = SuperStructureConstants.doClimb;
-      climb.runVolts(-2);
-
-      // sequence holder for climb
-      climbPose = otherSequence.Climbing;
     }
-    // } else if (DrA) {
-
-    //   climbAngle = SuperStructureConstants.HomeClimb;
-
-    //   // sequence holder for climb
-    //   climbPose = otherSequence.ClimbHome;
-    // }
 
     arm.setPosition(new Rotation2d(Units.degreesToRadians(armAngle)));
-    climb.setClimbPosition(new Rotation2d(Units.degreesToRadians(climbAngle)));
+    //  climb.setClimbPosition(new Rotation2d(Units.degreesToRadians(climbAngle)));
     extension.extendToDistance(extendDistance);
   }
 

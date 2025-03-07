@@ -6,7 +6,6 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -64,9 +63,10 @@ public class ClimbTalonFX implements ClimbIO {
     cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
     cfg.SoftwareLimitSwitch.ReverseSoftLimitThreshold = SuperStructureConstants.climbSoftLimitLow;
     cfg.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
-    cfg.Feedback.SensorToMechanismRatio = 1; // Does not do anything when using a remote can coder
+    // cfg.Feedback.SensorToMechanismRatio = 1; // Does not do anything when using a remote can
+    // coder
     cfg.Feedback.RotorToSensorRatio = SuperStructureConstants.climbGearRatio;
-    cfg.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    // cfg.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.;
 
     cfg.Voltage.PeakForwardVoltage = SuperStructureConstants.climbPeakVoltage;
     cfg.Voltage.PeakReverseVoltage = -SuperStructureConstants.climbPeakVoltage;

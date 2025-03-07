@@ -15,6 +15,7 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -29,6 +30,13 @@ public class ArmTalonFx implements ArmIO {
 
   private final TalonFX _angleMotorK;
   private final CANcoder _angleCANcoder;
+  private double setPointAngleRotations = 0;
+
+  private final ArmFeedforward feedforward =
+      new ArmFeedforward(
+          SuperStructureConstants.AngleS,
+          SuperStructureConstants.AngleG,
+          SuperStructureConstants.AngleV);
 
   private final StatusSignal<Angle> absolutePosition;
   private final StatusSignal<AngularVelocity> absoluteVelocity;
@@ -67,15 +75,15 @@ public class ArmTalonFx implements ArmIO {
     cfg.Slot0.kP =  SuperStructureConstants.AngleP;
     cfg.Slot0.kI = SuperStructureConstants.AngleI;
     cfg.Slot0.kD = SuperStructureConstants.AngleD;
-    cfg.Slot0.kG = SuperStructureConstants.AngleG;
-    cfg.Slot0.kV = SuperStructureConstants.AngleV;
-    cfg.Slot0.kS = SuperStructureConstants.AngleS;
-    cfg.Slot0.kA = SuperStructureConstants.AngleA;
-    cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    cfg.SoftwareLimitSwitch.ForwardSoftLimitThreshold = SuperStructureConstants.angleSoftLimitHigh;
-    cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    cfg.SoftwareLimitSwitch.ReverseSoftLimitThreshold = SuperStructureConstants.angleSoftLimitLow;
+    // cfg.Slot0.kG = SuperStructureConstants.AngleG;
+    // cfg.Slot0.kV = SuperStructureConstants.AngleV;
+    // cfg.Slot0.kS = SuperStructureConstants.AngleS;
+    // cfg.Slot0.kA = SuperStructureConstants.AngleA;
     cfg.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
+    cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
+    cfg.SoftwareLimitSwitch.ForwardSoftLimitThreshold = SuperStructureConstants.angleSoftLimitHigh;
+    cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
+    cfg.SoftwareLimitSwitch.ReverseSoftLimitThreshold = SuperStructureConstants.angleSoftLimitLow;
     cfg.Feedback.SensorToMechanismRatio = 1;
     cfg.Feedback.RotorToSensorRatio = SuperStructureConstants.angleGearRatio;
     cfg.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
@@ -103,23 +111,28 @@ public class ArmTalonFx implements ArmIO {
 
   @Override
   public void setAngle(double angle) {
-    double goToAngleRotations;
-    if ((angle * -360 < SuperStructureConstants.PrepAngle
-            && _angleMotorK.getPosition().getValueAsDouble() * -360
-                > SuperStructureConstants.PrepAngle - 2)
-        || (angle * -360 > SuperStructureConstants.PrepAngle
-            && _angleMotorK.getPosition().getValueAsDouble() * -360
+    double ff =
+        feedforward.calculate(
+            _angleMotorK.getPosition().getValueAsDouble(),
+            _angleMotorK.getVelocity().getValueAsDouble());
+
+    if ((angle * 360 < SuperStructureConstants.PrepAngle
+            && _angleMotorK.getPosition().getValueAsDouble() * 360
+                > SuperStructureConstants.PrepAngle + 2)
+        || (angle * 360 > SuperStructureConstants.PrepAngle
+            && _angleMotorK.getPosition().getValueAsDouble() * 360
                 < SuperStructureConstants.PrepAngle
-                    + 2)) { // protect against rotating under into the wall
-      goToAngleRotations =
+                    - 2)) { // protect against rotating under into the wall
+      setPointAngleRotations =
           Units.degreesToRotations(
               SuperStructureConstants
                   .PrepAngle); // if arm is arm below 90, go to 90. if arm is arm above 90, go to
       // 90.
     } else {
-      goToAngleRotations = angle;
+      setPointAngleRotations = angle;
     }
-    _angleMotorK.setControl(positonOut.withPosition(goToAngleRotations).withSlot(0));
+    _angleMotorK.setControl(
+        positonOut.withPosition(setPointAngleRotations).withSlot(0).withFeedForward(ff));
   }
 
   @Override
@@ -138,7 +151,6 @@ public class ArmTalonFx implements ArmIO {
 
   @Override
   public void updateInputs(ArmIOInputs inputs) {
-
     inputs.connected =
         BaseStatusSignal.refreshAll(
                 position,
@@ -153,12 +165,18 @@ public class ArmTalonFx implements ArmIO {
 
     inputs.positionAngle = Units.rotationsToDegrees(position.getValueAsDouble());
     inputs.velocityRPM = Units.radiansPerSecondToRotationsPerMinute(velocity.getValueAsDouble());
+    inputs.goToAngleDegrees = Units.rotationsToDegrees(setPointAngleRotations);
 
     inputs.appliedVoltage = voltage.getValueAsDouble();
     inputs.supplyCurrentAmps = supplyCurrentAmps.getValueAsDouble();
     inputs.torqueCurrentAmps = torqueCurrentAmps.getValueAsDouble();
     inputs.temperatureCelsius =
         tempCelsius.getValueAsDouble(); // dont add absolute position or coder stuff
+
+    positonOut.FeedForward =
+        feedforward.calculate(
+            _angleMotorK.getPosition().getValueAsDouble(),
+            _angleMotorK.getVelocity().getValueAsDouble());
+    // TODO add Input logging
   }
-  // TODO add Input logging
 }
