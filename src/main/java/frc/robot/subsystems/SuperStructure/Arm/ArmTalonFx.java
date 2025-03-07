@@ -127,7 +127,7 @@ public class ArmTalonFx implements ArmIO {
     // } else {
     //   setPointAngleRotations = angle;
     // }
-    _angleMotorK.setControl(mmVolts.withPosition(Units.degreesToRotations(angle))) ;
+    _angleMotorK.setControl(mmVolts.withPosition(angle));
   }
 
   @Override
