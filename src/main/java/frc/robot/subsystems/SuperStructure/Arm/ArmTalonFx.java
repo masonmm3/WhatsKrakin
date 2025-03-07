@@ -32,7 +32,6 @@ public class ArmTalonFx implements ArmIO {
 
   private final TalonFX _angleMotorK;
   private final CANcoder _angleCANcoder;
-  private double setPointAngleRotations = -72;
 
   private final StatusSignal<Angle> absolutePosition;
   private final StatusSignal<AngularVelocity> absoluteVelocity;
@@ -42,6 +41,8 @@ public class ArmTalonFx implements ArmIO {
   private final StatusSignal<Current> supplyCurrentAmps;
   private final StatusSignal<Current> torqueCurrentAmps;
   private final StatusSignal<Temperature> tempCelsius;
+
+  private double setPointAngleRotations;
 
   private final MotionMagicVoltage mmVolts = new MotionMagicVoltage(0);
 
@@ -86,7 +87,7 @@ public class ArmTalonFx implements ArmIO {
     cfg.SoftwareLimitSwitch.ReverseSoftLimitThreshold = SuperStructureConstants.angleSoftLimitLow;
     cfg.Feedback.SensorToMechanismRatio = 1;
     cfg.Feedback.RotorToSensorRatio = SuperStructureConstants.angleGearRatio;
-    cfg.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    cfg.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
     cfg.Feedback.FeedbackRemoteSensorID = _angleCANcoder.getDeviceID(); //connecting CAN to motor
     // voltage limits
     cfg.Voltage.PeakForwardVoltage = SuperStructureConstants.anglePeakVoltage;
@@ -106,12 +107,13 @@ public class ArmTalonFx implements ArmIO {
     _angleMotorK.optimizeBusUtilization(0.0, 1.0);
     _angleCANcoder.optimizeBusUtilization(0.0, 1.0);
 
+    _angleMotorK.setPosition(_angleCANcoder.getAbsolutePosition().getValueAsDouble());
+
     _angleMotorK.getConfigurator().apply(cfg);
   }
 
   @Override
   public void setAngle(double angle) {
-    // double setPointAngleRotations;
     // if ((angle * 360 < SuperStructureConstants.PrepAngle
     //         && _angleMotorK.getPosition().getValueAsDouble() * 360
     //             > SuperStructureConstants.PrepAngle + 2)
@@ -125,7 +127,10 @@ public class ArmTalonFx implements ArmIO {
     //               .PrepAngle); // if arm is arm below 90, go to 90. if arm is arm above 90, go to
     //   // 90.
     // } else {
+    angle = 0.25;
     setPointAngleRotations = angle;
+    // var angleSource = 120; // degrees
+    // Units.degreesToRotations(angleSource)
     // }
     _angleMotorK.setControl(mmVolts.withPosition(angle));
   }
@@ -158,7 +163,7 @@ public class ArmTalonFx implements ArmIO {
                 absoluteVelocity)
             .isOK();
 
-    inputs.positionAngle = Units.rotationsToDegrees(position.getValueAsDouble());
+    inputs.positionAngle = Units.rotationsToDegrees(position.getValueAsDouble() / 63);
     inputs.velocityDegPerSec = Units.rotationsToDegrees(velocity.getValueAsDouble());
     inputs.goToAngleDegrees = Units.rotationsToDegrees(setPointAngleRotations);
 

@@ -15,6 +15,8 @@ public class Arm {
 
   public Arm(ArmIO io) {
     this.io = io;
+
+    // this.io.setAngle(Angle);
   }
 
   /** updates arm values periodically */
