@@ -75,12 +75,12 @@ public final class SuperStructureConstants {
   public static double AngleI = 0;
   public static double AngleD = 0; // 3
   public static double AngleS = 0;
-  public static double AngleV = 0; //1.4
+  public static double AngleV = 0; // 1.4
   public static double AngleA = 0;
   public static double AngleG = 0; // 1.2
   public static double angleSoftLimitLow = 0; // -90
   public static double angleSoftLimitHigh = 0; // 270
-  public static double angleGearRatio = 63 / 36;
+  public static double angleGearRatio = 63 / 1;
 
   public static double ExtensionP = 0; // 8.5
   public static double ExtensionI = 0; // 5
